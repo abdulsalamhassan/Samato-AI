@@ -1,0 +1,37 @@
+[
+  {
+    "id": "ws-ceel-dheer",
+    "name": "Ceel Dheer Borehole",
+    "coordinates": [4.223, 46.387],
+    "status": "ACTIVE",
+    "notes": "Primary recommended source for central Galgaduud communities."
+  },
+  {
+    "id": "ws-cadaado",
+    "name": "Cadaado Water Point",
+    "coordinates": [6.136, 46.63],
+    "status": "LOW",
+    "notes": "Accessible by truck but under moderate strain."
+  },
+  {
+    "id": "ws-balanbale",
+    "name": "Balanbale Berkad Cluster",
+    "coordinates": [6.759, 47.43],
+    "status": "ACTIVE",
+    "notes": "Viable for nearby pastoral movements."
+  },
+  {
+    "id": "ws-guriceel",
+    "name": "Guriceel Community Well",
+    "coordinates": [5.298, 46.812],
+    "status": "ACTIVE",
+    "notes": "Fallback route for convoy dispatch."
+  },
+  {
+    "id": "ws-dhusamareb",
+    "name": "Dhuusamarreeb Reserve Tank",
+    "coordinates": [5.535, 46.386],
+    "status": "ACTIVE",
+    "notes": "District-level reserve suitable for aid staging."
+  }
+]
