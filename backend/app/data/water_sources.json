@@ -1,0 +1,26 @@
+[
+  {
+    "id": "ceel_dheer_borehole",
+    "name": "Ceel Dheer Borehole",
+    "latitude": 4.56,
+    "longitude": 46.81,
+    "capacity": "high",
+    "status": "active"
+  },
+  {
+    "id": "cadaado_water_point",
+    "name": "Cadaado Water Point",
+    "latitude": 6.136,
+    "longitude": 46.63,
+    "capacity": "medium",
+    "status": "low"
+  },
+  {
+    "id": "balanbale_berkad",
+    "name": "Balanbale Berkad Cluster",
+    "latitude": 6.759,
+    "longitude": 47.43,
+    "capacity": "high",
+    "status": "active"
+  }
+]

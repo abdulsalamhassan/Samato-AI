@@ -13,6 +13,8 @@ class Settings(BaseSettings):
         default_factory=lambda: ["http://localhost:3000", "http://127.0.0.1:3000"]
     )
     anthropic_api_key: str | None = None
+    openai_api_key: str | None = None
+    ai_provider: str = "deterministic"
 
 
 @lru_cache

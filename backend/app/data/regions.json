@@ -1,0 +1,74 @@
+[
+  {
+    "id": "ceel_buur",
+    "name": "Ceel Buur",
+    "region": "Galgaduud",
+    "latitude": 4.685,
+    "longitude": 46.617,
+    "population": 4200,
+    "livestock": 800,
+    "water_sources": ["ceel_dheer_borehole"],
+    "temperature_c": 36.0,
+    "days_since_rain": 63
+  },
+  {
+    "id": "ceel_dheer",
+    "name": "Ceel Dheer",
+    "region": "Galgaduud",
+    "latitude": 4.223,
+    "longitude": 46.387,
+    "population": 3100,
+    "livestock": 500,
+    "water_sources": ["ceel_dheer_borehole"],
+    "temperature_c": 34.0,
+    "days_since_rain": 49
+  },
+  {
+    "id": "cadaado",
+    "name": "Cadaado",
+    "region": "Galgaduud",
+    "latitude": 6.136,
+    "longitude": 46.63,
+    "population": 5600,
+    "livestock": 1100,
+    "water_sources": ["cadaado_water_point"],
+    "temperature_c": 35.0,
+    "days_since_rain": 28
+  },
+  {
+    "id": "balanbale",
+    "name": "Balanbale",
+    "region": "Galgaduud",
+    "latitude": 6.759,
+    "longitude": 47.43,
+    "population": 2800,
+    "livestock": 950,
+    "water_sources": ["balanbale_berkad"],
+    "temperature_c": 32.0,
+    "days_since_rain": 18
+  },
+  {
+    "id": "cabudwaaq",
+    "name": "Cabudwaaq",
+    "region": "Galgaduud",
+    "latitude": 6.232,
+    "longitude": 47.829,
+    "population": 4900,
+    "livestock": 1300,
+    "water_sources": ["balanbale_berkad"],
+    "temperature_c": 37.0,
+    "days_since_rain": 35
+  },
+  {
+    "id": "ceel_garas",
+    "name": "Ceel Garas",
+    "region": "Mudug",
+    "latitude": 6.623,
+    "longitude": 47.55,
+    "population": 1700,
+    "livestock": 620,
+    "water_sources": [],
+    "temperature_c": 38.0,
+    "days_since_rain": 71
+  }
+]
