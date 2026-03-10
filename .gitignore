@@ -11,6 +11,8 @@ venv/
 __pycache__/
 *.pyc
 .pytest_cache/
+backend/logs/
+backend/pytest-cache-files-*/
 
 .env
 .env.local
