@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from app.api.deps import get_rainfall_repository, get_region_repository
+from app.core.rate_limit import rate_limit
 from app.models.data_pipeline import RainfallImportRequest, RainfallImportResponse
 from app.repositories.rainfall_repo import RainfallRepository
 from app.repositories.region_repo import RegionRepository
@@ -12,6 +13,7 @@ router = APIRouter(tags=["data-pipeline"])
 @router.post("/import-rainfall", response_model=RainfallImportResponse)
 def import_rainfall(
     payload: RainfallImportRequest,
+    _: None = Depends(rate_limit("import-rainfall")),
     rainfall_repository: RainfallRepository = Depends(get_rainfall_repository),
     region_repository: RegionRepository = Depends(get_region_repository),
 ) -> RainfallImportResponse:

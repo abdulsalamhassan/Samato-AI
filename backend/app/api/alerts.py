@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.analysis import _resolve_region
 from app.api.deps import get_region_repository, get_water_source_repository
+from app.core.rate_limit import rate_limit
 from app.core.settings import Settings, get_settings
 from app.models.alert import AlertRequest, AlertResponse, RadioScriptResponse, SmsResponse
 from app.repositories.region_repo import RegionRepository
@@ -33,6 +34,7 @@ def _resolve_decision_context(
 @router.post("/generate-sms", response_model=SmsResponse)
 def generate_sms_route(
     payload: AlertRequest,
+    _: None = Depends(rate_limit("generate-sms")),
     region_repository: RegionRepository = Depends(get_region_repository),
     water_repository: WaterSourceRepository = Depends(get_water_source_repository),
     settings: Settings = Depends(get_settings),
@@ -53,6 +55,7 @@ def generate_sms_route(
 @router.post("/generate-alert", response_model=AlertResponse)
 def generate_alert_route(
     payload: AlertRequest,
+    _: None = Depends(rate_limit("generate-alert")),
     region_repository: RegionRepository = Depends(get_region_repository),
     water_repository: WaterSourceRepository = Depends(get_water_source_repository),
 ) -> AlertResponse:
@@ -67,6 +70,7 @@ def generate_alert_route(
 @router.post("/radio-script", response_model=RadioScriptResponse)
 def generate_radio_script_route(
     payload: AlertRequest,
+    _: None = Depends(rate_limit("radio-script")),
     region_repository: RegionRepository = Depends(get_region_repository),
     water_repository: WaterSourceRepository = Depends(get_water_source_repository),
 ) -> RadioScriptResponse:

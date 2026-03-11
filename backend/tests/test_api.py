@@ -65,6 +65,31 @@ def test_generate_sms_endpoint_uses_deterministic_fallback(client, deterministic
     assert payload["usedFallback"] is True
     assert "Ceel Dheer Borehole" in payload["message"]
 
+
+def test_generate_sms_endpoint_returns_429_when_rate_limit_exceeded(client):
+    limited_settings = type(
+        "SettingsStub",
+        (),
+        {
+            "ai_provider": "deterministic",
+            "anthropic_api_key": None,
+            "openai_api_key": None,
+            "rate_limit_requests": 1,
+            "rate_limit_window_seconds": 60,
+        },
+    )()
+    app.dependency_overrides[get_settings] = lambda: limited_settings
+    try:
+        first = client.post("/generate-sms", json={"regionId": "ceel_buur"})
+        second = client.post("/generate-sms", json={"regionId": "ceel_buur"})
+    finally:
+        app.dependency_overrides.clear()
+
+    assert first.status_code == 200
+    assert second.status_code == 429
+    assert second.json()["detail"] == "Rate limit exceeded"
+
+
 def test_import_rainfall_endpoint_merges_observations(client):
     temp_dir = Path("tests/.tmp")
     temp_dir.mkdir(parents=True, exist_ok=True)

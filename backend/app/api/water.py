@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.analysis import _resolve_region
 from app.api.deps import get_region_repository, get_water_source_repository
+from app.core.rate_limit import rate_limit
 from app.models.navigation import NearestWaterRequest, NearestWaterResult
 from app.repositories.region_repo import RegionRepository
 from app.repositories.water_repo import WaterSourceRepository
@@ -13,6 +14,7 @@ router = APIRouter(tags=["water"])
 @router.post("/nearest-water", response_model=NearestWaterResult)
 def nearest_water(
     payload: NearestWaterRequest,
+    _: None = Depends(rate_limit("nearest-water")),
     region_repository: RegionRepository = Depends(get_region_repository),
     water_repository: WaterSourceRepository = Depends(get_water_source_repository),
 ) -> NearestWaterResult:

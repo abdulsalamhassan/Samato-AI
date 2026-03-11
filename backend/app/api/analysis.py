@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.deps import get_region_repository
+from app.core.rate_limit import rate_limit
 from app.models.drought import AnalyzeRegionRequest, DroughtAnalysis
 from app.models.region import Region
 from app.repositories.region_repo import RegionRepository
@@ -20,6 +21,7 @@ def _resolve_region(payload: AnalyzeRegionRequest, repository: RegionRepository)
 @router.post("/analyze-region", response_model=DroughtAnalysis)
 def analyze_region(
     payload: AnalyzeRegionRequest,
+    _: None = Depends(rate_limit("analyze-region")),
     repository: RegionRepository = Depends(get_region_repository),
 ) -> DroughtAnalysis:
     region = _resolve_region(payload, repository)

@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     anthropic_api_key: str | None = None
     openai_api_key: str | None = None
     ai_provider: str = "deterministic"
+    rate_limit_requests: int = 20
+    rate_limit_window_seconds: int = 60
 
 
 @lru_cache
