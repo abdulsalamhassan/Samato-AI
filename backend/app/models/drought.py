@@ -1,6 +1,5 @@
-from typing import Literal
-
 from pydantic import BaseModel, Field
+from app.models.common import ActionCode, RiskLevel
 
 
 class AnalyzeRegionRequest(BaseModel):
@@ -18,6 +17,7 @@ class DroughtAnalysis(BaseModel):
     source_count: int = Field(alias="sourceCount")
     stress_factor: float = Field(alias="stressFactor")
     risk_score: float = Field(alias="riskScore")
-    risk_level: Literal["STABLE", "WARNING", "CRITICAL"] = Field(alias="riskLevel")
+    risk_level: RiskLevel = Field(alias="riskLevel")
+    action_code: ActionCode = Field(alias="actionCode")
     estimated_days_remaining: int = Field(alias="estimatedDaysRemaining")
     recommended_action: str = Field(alias="recommendedAction")

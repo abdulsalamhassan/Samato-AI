@@ -10,6 +10,7 @@ def test_calculate_risk_returns_expected_fields():
 
     assert analysis.region_id == "ceel_buur"
     assert analysis.risk_level == "CRITICAL"
+    assert analysis.action_code == "DISPATCH_WATER_AND_MOVE_COMMUNITY"
     assert analysis.water_demand_lpd > 0
     assert analysis.estimated_days_remaining >= 3
 
@@ -34,3 +35,4 @@ def test_calculate_risk_penalizes_regions_without_sources():
 
     assert dry_analysis.risk_score > sourced_analysis.risk_score
     assert dry_analysis.source_count == 0
+    assert dry_analysis.action_code == "DISPATCH_WATER_AND_MOVE_COMMUNITY"

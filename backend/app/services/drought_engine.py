@@ -27,12 +27,15 @@ def calculate_risk(region: Region) -> DroughtAnalysis:
 
     if risk_score >= 70:
         risk_level = "CRITICAL"
+        action_code = "DISPATCH_WATER_AND_MOVE_COMMUNITY"
         recommended_action = "Immediate water trucking and community movement planning required."
     elif risk_score >= 40:
         risk_level = "WARNING"
+        action_code = "PREPARE_WATER_DELIVERY"
         recommended_action = "Prepare water delivery, monitor sources, and pre-alert field teams."
     else:
         risk_level = "STABLE"
+        action_code = "MONITOR_LOCAL_WATER"
         recommended_action = "Continue monitoring and verify local water point conditions."
 
     estimated_days_remaining = max(3, int(round(45 - (risk_score * 0.45) - (region.days_since_rain * 0.12))))
@@ -46,6 +49,7 @@ def calculate_risk(region: Region) -> DroughtAnalysis:
         stressFactor=stress_factor,
         riskScore=risk_score,
         riskLevel=risk_level,
+        actionCode=action_code,
         estimatedDaysRemaining=estimated_days_remaining,
         recommendedAction=recommended_action,
     )

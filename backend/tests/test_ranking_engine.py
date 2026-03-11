@@ -8,6 +8,7 @@ def test_rank_regions_sorts_by_highest_risk_first():
     assert len(ranked) >= 3
     assert ranked[0].risk_score >= ranked[1].risk_score
     assert ranked[0].region_name == "Ceel Garas"
+    assert ranked[0].action_code == "DISPATCH_WATER_AND_MOVE_COMMUNITY"
 
 
 def test_rank_regions_honors_limit():

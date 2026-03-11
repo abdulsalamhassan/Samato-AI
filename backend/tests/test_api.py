@@ -31,6 +31,7 @@ def test_rankings_endpoint_returns_computed_priority_list(client):
     assert response.status_code == 200
     assert payload["total"] == 2
     assert payload["regions"][0]["regionName"] == "Ceel Garas"
+    assert payload["regions"][0]["actionCode"] == "DISPATCH_WATER_AND_MOVE_COMMUNITY"
 
 
 def test_analyze_region_endpoint_returns_drought_analysis(client):
@@ -40,6 +41,7 @@ def test_analyze_region_endpoint_returns_drought_analysis(client):
     assert response.status_code == 200
     assert payload["regionId"] == "ceel_buur"
     assert payload["riskLevel"] == "CRITICAL"
+    assert payload["actionCode"] == "DISPATCH_WATER_AND_MOVE_COMMUNITY"
 
 
 def test_nearest_water_endpoint_returns_navigation(client):
