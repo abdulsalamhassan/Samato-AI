@@ -1,19 +1,34 @@
-import json
 from pathlib import Path
 
+from app.models.data_pipeline import RainfallObservation, RegionBaseline
 from app.models.region import Region
+from app.repositories.data_repository import JsonDataRepository
+from app.services.data_pipeline import build_regions
 
-DATA_FILE = Path(__file__).resolve().parents[1] / "data" / "regions.json"
+BASELINE_FILE = Path(__file__).resolve().parents[1] / "data" / "region_baselines.json"
+RAINFALL_FILE = Path(__file__).resolve().parents[1] / "data" / "rainfall_observations.json"
 
 
 class RegionRepository:
-    def __init__(self, data_file: Path = DATA_FILE) -> None:
-        self.data_file = data_file
+    def __init__(
+        self,
+        baseline_file: Path = BASELINE_FILE,
+        rainfall_file: Path = RAINFALL_FILE,
+    ) -> None:
+        self.baseline_file = baseline_file
+        self.rainfall_file = rainfall_file
+        self.data_repository = JsonDataRepository()
 
     def get_all_regions(self) -> list[Region]:
-        with self.data_file.open("r", encoding="utf-8") as file:
-            payload = json.load(file)
-        return [Region.model_validate(item) for item in payload]
+        baselines = self.data_repository.load_many(
+            self.baseline_file.name,
+            RegionBaseline,
+        )
+        observations = self.data_repository.load_many(
+            self.rainfall_file.name,
+            RainfallObservation,
+        )
+        return build_regions(baselines, observations)
 
     def get_region_by_id(self, region_id: str) -> Region | None:
         return next(

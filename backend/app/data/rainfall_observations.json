@@ -1,0 +1,37 @@
+[
+  {
+    "regionId": "ceel_buur",
+    "observedOn": "2026-01-07",
+    "precipitationMm": 3.2
+  },
+  {
+    "regionId": "ceel_dheer",
+    "observedOn": "2026-01-21",
+    "precipitationMm": 2.1
+  },
+  {
+    "regionId": "cadaado",
+    "observedOn": "2026-02-11",
+    "precipitationMm": 4.4
+  },
+  {
+    "regionId": "balanbale",
+    "observedOn": "2026-02-21",
+    "precipitationMm": 6.0
+  },
+  {
+    "regionId": "cabudwaaq",
+    "observedOn": "2026-02-04",
+    "precipitationMm": 2.8
+  },
+  {
+    "regionId": "ceel_garas",
+    "observedOn": "2025-12-30",
+    "precipitationMm": 1.4
+  },
+  {
+    "regionId": "ceel_garas",
+    "observedOn": "2026-03-01",
+    "precipitationMm": 0.3
+  }
+]

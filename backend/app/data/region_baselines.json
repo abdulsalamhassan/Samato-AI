@@ -8,8 +8,7 @@
     "population": 4200,
     "livestock": 800,
     "water_sources": ["ceel_dheer_borehole"],
-    "temperature_c": 36.0,
-    "days_since_rain": 63
+    "temperature_c": 36.0
   },
   {
     "id": "ceel_dheer",
@@ -20,8 +19,7 @@
     "population": 3100,
     "livestock": 500,
     "water_sources": ["ceel_dheer_borehole"],
-    "temperature_c": 34.0,
-    "days_since_rain": 49
+    "temperature_c": 34.0
   },
   {
     "id": "cadaado",
@@ -32,8 +30,7 @@
     "population": 5600,
     "livestock": 1100,
     "water_sources": ["cadaado_water_point"],
-    "temperature_c": 35.0,
-    "days_since_rain": 28
+    "temperature_c": 35.0
   },
   {
     "id": "balanbale",
@@ -44,8 +41,7 @@
     "population": 2800,
     "livestock": 950,
     "water_sources": ["balanbale_berkad"],
-    "temperature_c": 32.0,
-    "days_since_rain": 18
+    "temperature_c": 32.0
   },
   {
     "id": "cabudwaaq",
@@ -56,8 +52,7 @@
     "population": 4900,
     "livestock": 1300,
     "water_sources": ["balanbale_berkad"],
-    "temperature_c": 37.0,
-    "days_since_rain": 35
+    "temperature_c": 37.0
   },
   {
     "id": "ceel_garas",
@@ -68,7 +63,6 @@
     "population": 1700,
     "livestock": 620,
     "water_sources": [],
-    "temperature_c": 38.0,
-    "days_since_rain": 71
+    "temperature_c": 38.0
   }
 ]
