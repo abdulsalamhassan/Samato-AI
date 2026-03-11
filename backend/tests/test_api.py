@@ -1,5 +1,11 @@
+import json
+from pathlib import Path
+from uuid import uuid4
+
 from app.api.alerts import get_settings
+from app.api.deps import get_rainfall_repository
 from app.main import app
+from app.repositories.rainfall_repo import RainfallRepository
 
 
 def test_health_endpoint(client):
@@ -56,3 +62,43 @@ def test_generate_sms_endpoint_uses_deterministic_fallback(client, deterministic
     assert payload["provider"] == "deterministic"
     assert payload["usedFallback"] is True
     assert "Ceel Dheer Borehole" in payload["message"]
+
+def test_import_rainfall_endpoint_merges_observations(client):
+    temp_dir = Path("tests/.tmp")
+    temp_dir.mkdir(parents=True, exist_ok=True)
+    temp_file = temp_dir / f"rainfall_observations_{uuid4().hex}.json"
+    temp_file.write_text(
+        json.dumps(
+            [
+                {
+                    "regionId": "ceel_buur",
+                    "observedOn": "2026-01-07",
+                    "precipitationMm": 3.2,
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
+    app.dependency_overrides[get_rainfall_repository] = lambda: RainfallRepository(temp_file)
+    try:
+        response = client.post(
+            "/import-rainfall",
+            json={
+                "observations": [
+                    {
+                        "regionId": "ceel_buur",
+                        "observedOn": "2026-03-10",
+                        "precipitationMm": 4.0,
+                    }
+                ]
+            },
+        )
+    finally:
+        app.dependency_overrides.pop(get_rainfall_repository, None)
+        if temp_file.exists():
+            temp_file.unlink()
+
+    payload = response.json()
+    assert response.status_code == 200
+    assert payload["imported"] == 1
+    assert payload["totalObservations"] == 2

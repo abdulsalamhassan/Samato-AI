@@ -17,3 +17,11 @@ class JsonDataRepository:
         with (self.data_dir / filename).open("r", encoding="utf-8") as file:
             payload = json.load(file)
         return [model.model_validate(item) for item in payload]
+
+    def save_many(self, filename: str, records: list[BaseModel]) -> None:
+        with (self.data_dir / filename).open("w", encoding="utf-8") as file:
+            json.dump(
+                [record.model_dump(mode="json", by_alias=True) for record in records],
+                file,
+                indent=2,
+            )

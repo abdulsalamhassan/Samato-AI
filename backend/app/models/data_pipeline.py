@@ -19,3 +19,12 @@ class RainfallObservation(BaseModel):
     region_id: str = Field(alias="regionId")
     observed_on: date = Field(alias="observedOn")
     precipitation_mm: float = Field(alias="precipitationMm", ge=0)
+
+
+class RainfallImportRequest(BaseModel):
+    observations: list[RainfallObservation]
+
+
+class RainfallImportResponse(BaseModel):
+    imported: int
+    total_observations: int = Field(alias="totalObservations")
