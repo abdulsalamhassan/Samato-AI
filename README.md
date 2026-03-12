@@ -1,6 +1,6 @@
 # SAMATO AI
 
-Scaffold for the SAMATO AI drought crisis detection and nomad alert system described in the project blueprint.
+Scaffold for the SAMATO AI drought crisis detection and nomad alert system described in the project blueprint. 
 
 ## Workspace
 
