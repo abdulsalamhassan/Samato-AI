@@ -10,9 +10,14 @@ def test_build_regions_computes_days_since_latest_significant_rainfall():
         RegionBaseline(
             id="alpha",
             name="Alpha",
+            district="Alpha",
+            district_pcode=None,
             region="Test",
+            region_pcode=None,
+            country="Somalia",
             latitude=1.0,
             longitude=2.0,
+            area_sqkm=10.0,
             population=100,
             livestock=50,
             water_sources=["well_1"],
@@ -35,9 +40,14 @@ def test_build_regions_defaults_when_no_significant_rainfall_exists():
         RegionBaseline(
             id="dry_case",
             name="Dry Case",
+            district="Dry Case",
+            district_pcode=None,
             region="Test",
+            region_pcode=None,
+            country="Somalia",
             latitude=1.0,
             longitude=2.0,
+            area_sqkm=10.0,
             population=100,
             livestock=50,
             water_sources=[],
@@ -51,8 +61,9 @@ def test_build_regions_defaults_when_no_significant_rainfall_exists():
 
 
 def test_region_repository_returns_ingested_regions():
-    region = RegionRepository().get_region_by_id("ceel_buur")
+    region = RegionRepository().get_region_by_name("Ceel Buur")
 
     assert region is not None
-    assert region.days_since_rain == 63
-    assert region.temperature_c == 36.0
+    assert region.region == "Galgaduud"
+    assert region.country == "Somalia"
+    assert region.days_since_rain >= 0

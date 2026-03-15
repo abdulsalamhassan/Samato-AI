@@ -4,7 +4,7 @@ from app.services.water_engine import find_nearest_water
 
 
 def test_find_nearest_water_returns_distance_and_direction():
-    region = RegionRepository().get_region_by_id("ceel_buur")
+    region = RegionRepository().get_region_by_name("Ceel Buur")
     sources = WaterSourceRepository().get_all_water_sources()
 
     result = find_nearest_water(region, sources)
@@ -16,7 +16,7 @@ def test_find_nearest_water_returns_distance_and_direction():
 
 
 def test_find_nearest_water_ignores_offline_sources():
-    region = RegionRepository().get_region_by_id("ceel_buur")
+    region = RegionRepository().get_region_by_name("Ceel Buur")
     offline_sources = [
         source.model_copy(update={"status": "offline"})
         for source in WaterSourceRepository().get_all_water_sources()

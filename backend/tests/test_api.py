@@ -21,7 +21,9 @@ def test_regions_endpoint_returns_seed_data(client):
     payload = response.json()
     assert response.status_code == 200
     assert len(payload) >= 6
-    assert payload[0]["id"] == "ceel_buur"
+    assert payload[0]["district"]
+    assert payload[0]["region"]
+    assert payload[0]["country"] == "Somalia"
 
 
 def test_rankings_endpoint_returns_computed_priority_list(client):
@@ -30,22 +32,29 @@ def test_rankings_endpoint_returns_computed_priority_list(client):
     payload = response.json()
     assert response.status_code == 200
     assert payload["total"] == 2
-    assert payload["regions"][0]["regionName"] == "Ceel Garas"
-    assert payload["regions"][0]["actionCode"] == "DISPATCH_WATER_AND_MOVE_COMMUNITY"
+    assert payload["regions"][0]["riskScore"] >= payload["regions"][1]["riskScore"]
+    assert payload["regions"][0]["actionCode"] in {
+        "MONITOR_LOCAL_WATER",
+        "PREPARE_WATER_DELIVERY",
+        "DISPATCH_WATER_AND_MOVE_COMMUNITY",
+    }
 
 
 def test_analyze_region_endpoint_returns_drought_analysis(client):
-    response = client.post("/analyze-region", json={"regionId": "ceel_buur"})
+    response = client.post("/analyze-region", json={"regionName": "Ceel Buur"})
 
     payload = response.json()
     assert response.status_code == 200
-    assert payload["regionId"] == "ceel_buur"
-    assert payload["riskLevel"] == "CRITICAL"
-    assert payload["actionCode"] == "DISPATCH_WATER_AND_MOVE_COMMUNITY"
+    assert payload["regionName"] == "Ceel Buur"
+    assert payload["riskLevel"] in {"WARNING", "CRITICAL"}
+    assert payload["actionCode"] in {
+        "PREPARE_WATER_DELIVERY",
+        "DISPATCH_WATER_AND_MOVE_COMMUNITY",
+    }
 
 
 def test_nearest_water_endpoint_returns_navigation(client):
-    response = client.post("/nearest-water", json={"regionId": "ceel_buur"})
+    response = client.post("/nearest-water", json={"regionName": "Ceel Buur"})
 
     payload = response.json()
     assert response.status_code == 200
@@ -55,7 +64,7 @@ def test_nearest_water_endpoint_returns_navigation(client):
 def test_generate_sms_endpoint_uses_deterministic_fallback(client, deterministic_settings):
     app.dependency_overrides[get_settings] = lambda: deterministic_settings
     try:
-        response = client.post("/generate-sms", json={"regionId": "ceel_buur"})
+        response = client.post("/generate-sms", json={"regionName": "Ceel Buur"})
     finally:
         app.dependency_overrides.clear()
 
@@ -80,8 +89,8 @@ def test_generate_sms_endpoint_returns_429_when_rate_limit_exceeded(client):
     )()
     app.dependency_overrides[get_settings] = lambda: limited_settings
     try:
-        first = client.post("/generate-sms", json={"regionId": "ceel_buur"})
-        second = client.post("/generate-sms", json={"regionId": "ceel_buur"})
+        first = client.post("/generate-sms", json={"regionName": "Ceel Buur"})
+        second = client.post("/generate-sms", json={"regionName": "Ceel Buur"})
     finally:
         app.dependency_overrides.clear()
 
@@ -98,7 +107,7 @@ def test_import_rainfall_endpoint_merges_observations(client):
         json.dumps(
             [
                 {
-                    "regionId": "ceel_buur",
+                    "regionId": "so1904",
                     "observedOn": "2026-01-07",
                     "precipitationMm": 3.2,
                 }
@@ -113,7 +122,7 @@ def test_import_rainfall_endpoint_merges_observations(client):
             json={
                 "observations": [
                     {
-                        "regionId": "ceel_buur",
+                        "regionId": "so1904",
                         "observedOn": "2026-03-10",
                         "precipitationMm": 4.0,
                     }

@@ -6,15 +6,17 @@ def test_region_repository_loads_seed_regions():
     regions = RegionRepository().get_all_regions()
 
     assert len(regions) >= 6
-    assert regions[0].id == "ceel_buur"
-    assert regions[0].water_sources
+    assert regions[0].district
+    assert regions[0].region
+    assert regions[0].country == "Somalia"
 
 
 def test_region_repository_lookup_by_id_and_name():
     repository = RegionRepository()
 
-    by_id = repository.get_region_by_id("ceel_buur")
-    by_name = repository.get_region_by_name("Ceel Buur")
+    first = repository.get_all_regions()[0]
+    by_id = repository.get_region_by_id(first.id)
+    by_name = repository.get_region_by_name(first.name)
 
     assert by_id is not None
     assert by_name is not None

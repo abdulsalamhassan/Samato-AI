@@ -7,9 +7,11 @@ BASE_WATER_SOURCE_CAPACITY_LPD = 50000
 
 
 def calculate_risk(region: Region) -> DroughtAnalysis:
+    population = region.population or 0
+    livestock = region.livestock or 0
     water_demand = (
-        region.population * LITERS_PER_PERSON_PER_DAY
-        + region.livestock * LITERS_PER_LIVESTOCK_PER_DAY
+        population * LITERS_PER_PERSON_PER_DAY
+        + livestock * LITERS_PER_LIVESTOCK_PER_DAY
     )
     source_count = max(0, len(region.water_sources))
     effective_supply = max(15000, source_count * BASE_WATER_SOURCE_CAPACITY_LPD)
