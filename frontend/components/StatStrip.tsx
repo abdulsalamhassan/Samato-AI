@@ -1,11 +1,29 @@
-const stats = [
-  { label: "Tracked communities", value: "6" },
-  { label: "Critical today", value: "2" },
-  { label: "Water points monitored", value: "5" },
-  { label: "Alert channels", value: "SMS + Radio" },
-];
+import type { RankedRegion, RegionRecord } from "@/lib/types";
 
-export function StatStrip() {
+type StatStripProps = {
+  regions: RegionRecord[];
+  rankings: RankedRegion[];
+  isLoading: boolean;
+};
+
+export function StatStrip({ regions, rankings, isLoading }: StatStripProps) {
+  const criticalToday = rankings.filter(
+    (region) => region.riskLevel === "CRITICAL",
+  ).length;
+  const monitoredWaterPoints = regions.reduce(
+    (sum, region) => sum + region.water_sources.length,
+    0,
+  );
+  const stats = [
+    { label: "Tracked districts", value: isLoading ? "..." : String(regions.length) },
+    { label: "Critical today", value: isLoading ? "..." : String(criticalToday) },
+    {
+      label: "Water links tracked",
+      value: isLoading ? "..." : String(monitoredWaterPoints),
+    },
+    { label: "Alert channels", value: "SMS + Radio" },
+  ];
+
   return (
     <section className="grid gap-4 md:grid-cols-4">
       {stats.map((stat) => (
