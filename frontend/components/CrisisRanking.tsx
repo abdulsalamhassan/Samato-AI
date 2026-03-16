@@ -32,14 +32,16 @@ export function CrisisRanking({
         ) : (
           rankings.slice(0, 5).map((region) => {
             const progress = Math.max(10, Math.min(100, ((30 - region.estimatedDaysRemaining) / 30) * 100));
+            const isSelected = selectedRegionName === region.regionName;
 
             return (
               <button
                 key={region.regionId}
                 type="button"
                 onClick={() => onSelectRegion(region.regionName)}
+                aria-pressed={isSelected}
                 className={`rounded-[0.95rem] border px-4 py-4 text-left transition ${
-                  selectedRegionName === region.regionName
+                  isSelected
                     ? "border-[rgba(47,111,237,0.32)] bg-[rgba(47,111,237,0.06)] shadow-[0_12px_20px_rgba(47,111,237,0.08)]"
                     : "border-[rgba(119,145,177,0.18)] bg-[#fcfdff] hover:border-[rgba(47,111,237,0.25)]"
                 }`}
@@ -52,9 +54,16 @@ export function CrisisRanking({
                       {region.estimatedDaysRemaining >= 0 ? `  POP. ${region.estimatedDaysRemaining * 900}` : ""}
                     </p>
                   </div>
-                  <span className={`rounded-md px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] ${statusClassName[region.riskLevel]}`}>
-                    {region.riskLevel}
-                  </span>
+                  <div className="flex flex-col items-end gap-2">
+                    <span className={`rounded-md px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] ${statusClassName[region.riskLevel]}`}>
+                      {region.riskLevel}
+                    </span>
+                    {isSelected ? (
+                      <span className="rounded-full bg-[rgba(47,111,237,0.12)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--accent)]">
+                        Focused
+                      </span>
+                    ) : null}
+                  </div>
                 </div>
                 <div className="mt-4">
                   <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--muted)]">
@@ -75,6 +84,9 @@ export function CrisisRanking({
                       style={{ width: `${progress}%` }}
                     />
                   </div>
+                  <p className="mt-2 text-xs text-[var(--muted)]">
+                    {isSelected ? "Live detail panels are locked to this region." : "Select to inspect full decision flow."}
+                  </p>
                 </div>
               </button>
             );
