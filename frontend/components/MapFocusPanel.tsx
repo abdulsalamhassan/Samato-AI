@@ -93,7 +93,10 @@ export function MapFocusPanel({
               <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">Suggested Distribution Point</p>
               <p className="mt-2 text-[1.15rem] font-semibold text-[var(--text)]">{aidPlan.distributionCenter}</p>
               <p className="mt-3 text-sm text-[var(--muted)]">
-                {aidPlan.waterTrucksRequired} truck loads, {aidPlan.populationServed.toLocaleString()} people served, planning only.
+                {aidPlan.truckTripsFor3DayWindow} trips in 3 days, {aidPlan.populationServed.toLocaleString()} people served, planning only.
+              </p>
+              <p className="mt-2 text-sm text-[var(--muted)]">
+                Route via {aidPlan.nearestWaterSourceName}, {aidPlan.nearestWaterDistanceKm} km {aidPlan.nearestWaterDirection}.
               </p>
             </>
           )}

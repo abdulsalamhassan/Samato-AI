@@ -1,9 +1,14 @@
 import type {
   AidPlan,
+  AnalysisCenterResponse,
   AlertReportResponse,
+  DashboardBootstrapResponse,
+  DistrictGeoJson,
   DroughtAnalysis,
   RadioScriptResponse,
   RankingsResponse,
+  RainfallStatus,
+  RegionDecisionContext,
   RegionRecord,
   SmsPreviewResponse,
 } from "@/lib/types";
@@ -35,6 +40,26 @@ export function fetchRegions() {
 
 export function fetchRankings(limit = 10) {
   return fetchJson<RankingsResponse>(`/rankings?limit=${limit}`);
+}
+
+export function fetchDashboardBootstrap(rankingLimit = 20) {
+  return fetchJson<DashboardBootstrapResponse>(`/dashboard/bootstrap?ranking_limit=${rankingLimit}`);
+}
+
+export function fetchRegionDecisionContext(regionId: string) {
+  return fetchJson<RegionDecisionContext>(`/dashboard/regions/${regionId}`);
+}
+
+export function fetchAnalysisCenter(limit = 12) {
+  return fetchJson<AnalysisCenterResponse>(`/analysis-center?limit=${limit}`);
+}
+
+export function fetchDistrictGeoJson() {
+  return fetchJson<DistrictGeoJson>("/geo/districts");
+}
+
+export function refreshRainfallFeed() {
+  return fetchJson<RainfallStatus>("/refresh-rainfall", { method: "POST" });
 }
 
 export function fetchRegionAnalysis(regionName: string) {

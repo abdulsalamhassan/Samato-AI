@@ -39,3 +39,7 @@ class RainfallImportRequest(BaseModel):
 class RainfallImportResponse(BaseModel):
     imported: int
     total_observations: int = Field(alias="totalObservations")
+
+
+class RainfallFeedPayload(BaseModel):
+    observations: list[RainfallObservation]

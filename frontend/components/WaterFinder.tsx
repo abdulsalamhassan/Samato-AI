@@ -46,8 +46,22 @@ export function WaterFinder({
                   <p className="mt-1 text-lg font-semibold text-[var(--text)]">{aidPlan.litersRequiredPerDay.toLocaleString()}L</p>
                 </div>
                 <div className={detailCardClassName}>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--muted)]">Truck Loads</p>
-                  <p className="mt-1 text-lg font-semibold text-[var(--text)]">{aidPlan.waterTrucksRequired}</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--muted)]">3-Day Trips</p>
+                  <p className="mt-1 text-lg font-semibold text-[var(--text)]">{aidPlan.truckTripsFor3DayWindow}</p>
+                </div>
+              </div>
+              <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                <div className={detailCardClassName}>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--muted)]">7-Day Volume</p>
+                  <p className="mt-1 text-lg font-semibold text-[var(--text)]">{aidPlan.litersRequired7Day.toLocaleString()}L</p>
+                </div>
+                <div className={detailCardClassName}>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--muted)]">Staging Window</p>
+                  <p className="mt-1 text-lg font-semibold text-[var(--text)]">{aidPlan.stagingWindowHours}h</p>
+                </div>
+                <div className={detailCardClassName}>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--muted)]">Refill Cycle</p>
+                  <p className="mt-1 text-lg font-semibold text-[var(--text)]">{aidPlan.refillCycleHours}h</p>
                 </div>
               </div>
             </>
@@ -58,6 +72,11 @@ export function WaterFinder({
           <p className="mt-2 text-xl font-semibold">{aidPlan?.planningStatus ?? "Pending recommendation"}</p>
           <p className="mt-2 text-sm leading-6 text-white/62">
             {analysis?.recommendedAction ?? "Waiting for internal NGO planning recommendation."}
+          </p>
+          <p className="mt-4 text-sm leading-6 text-white/62">
+            {aidPlan
+              ? `${aidPlan.nearestWaterSourceName} is ${aidPlan.nearestWaterDistanceKm} km ${aidPlan.nearestWaterDirection}. Convoy priority: ${aidPlan.convoyPriority}.`
+              : "Route and convoy details pending recommendation."}
           </p>
         </div>
       </div>

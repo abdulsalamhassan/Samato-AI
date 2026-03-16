@@ -79,6 +79,8 @@ def test_aid_plan_endpoint_returns_distribution_recommendation(client):
     assert payload["regionName"] == "Ceel Buur"
     assert payload["distributionCenter"] == "Ceel Buur District Center"
     assert payload["planningStatus"] == "PLANNING_RECOMMENDATION_ONLY"
+    assert payload["nearestWaterSourceName"] == "Ceel Dheer Borehole"
+    assert payload["truckTripsFor7DayWindow"] >= payload["waterTrucksRequired"]
     assert payload["planningBasis"]
 
 
@@ -135,6 +137,70 @@ def test_generate_sms_endpoint_returns_429_when_rate_limit_exceeded(client):
     assert first.status_code == 200
     assert second.status_code == 429
     assert second.json()["detail"] == "Rate limit exceeded"
+
+
+def test_dashboard_bootstrap_returns_regions_rankings_and_rainfall_status(client):
+    response = client.get("/dashboard/bootstrap")
+
+    payload = response.json()
+    assert response.status_code == 200
+    assert payload["regions"]
+    assert payload["rankings"]
+    assert "rainfallStatus" in payload
+
+
+def test_dashboard_region_details_returns_aggregated_decision_context(client):
+    region_response = client.get("/regions")
+    region_id = region_response.json()[0]["id"]
+
+    response = client.get(f"/dashboard/regions/{region_id}")
+
+    payload = response.json()
+    assert response.status_code == 200
+    assert payload["region"]["id"] == region_id
+    assert payload["analysis"]["regionId"] == region_id
+    assert payload["aidPlan"]["regionId"] == region_id
+    assert payload["waterNavigation"]["regionId"] == region_id
+    assert payload["sms"]["message"]
+    assert payload["alert"]["report"]
+    assert payload["radio"]["script"]
+
+
+def test_analysis_center_returns_batch_workflow_items(client):
+    response = client.get("/analysis-center?limit=3")
+
+    payload = response.json()
+    assert response.status_code == 200
+    assert payload["total"] == 3
+    assert len(payload["items"]) == 3
+    assert payload["items"][0]["ranking"]["riskScore"] >= payload["items"][1]["ranking"]["riskScore"]
+
+
+def test_geo_districts_returns_matching_feature_collection(client):
+    response = client.get("/geo/districts")
+
+    payload = response.json()
+    assert response.status_code == 200
+    assert payload["type"] == "FeatureCollection"
+    assert payload["features"]
+    assert payload["features"][0]["properties"]["adm2_pcode"]
+
+
+def test_refresh_rainfall_without_feed_returns_idle_status(client, deterministic_settings):
+    deterministic_settings.rainfall_feed_url = None
+    deterministic_settings.rainfall_feed_path = None
+    deterministic_settings.rainfall_auto_refresh_enabled = False
+    deterministic_settings.rainfall_refresh_interval_minutes = 60
+    app.dependency_overrides[get_settings] = lambda: deterministic_settings
+    try:
+        response = client.post("/refresh-rainfall")
+    finally:
+        app.dependency_overrides.clear()
+
+    payload = response.json()
+    assert response.status_code == 200
+    assert payload["status"] == "idle"
+    assert payload["message"] == "No rainfall feed configured."
 
 
 

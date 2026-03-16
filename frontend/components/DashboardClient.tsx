@@ -3,30 +3,27 @@
 import dynamic from "next/dynamic";
 import { startTransition, useEffect, useMemo, useState } from "react";
 
-import { AlertPanel } from "@/components/AlertPanel";
+import { AnalysisCenter } from "@/components/AnalysisCenter";
 import { CrisisRanking } from "@/components/CrisisRanking";
+import { DecisionSupportPanel } from "@/components/DecisionSupportPanel";
 import { Header } from "@/components/Header";
-import { RegionAnalyzer } from "@/components/RegionAnalyzer";
 import { SMSPreview } from "@/components/SMSPreview";
 import { StatStrip } from "@/components/StatStrip";
 import { WaterFinder } from "@/components/WaterFinder";
 import {
-  fetchAidPlan,
-  fetchAlert,
-  fetchRadioScript,
-  fetchRankings,
-  fetchRegionAnalysis,
-  fetchRegions,
-  fetchSms,
+  fetchAnalysisCenter,
+  fetchDashboardBootstrap,
+  fetchDistrictGeoJson,
+  fetchRegionDecisionContext,
+  refreshRainfallFeed,
 } from "@/lib/api";
 import type {
-  AidPlan,
-  AlertReportResponse,
-  DroughtAnalysis,
-  RadioScriptResponse,
+  AnalysisCenterItem,
+  DistrictGeoJson,
+  RainfallStatus,
   RankedRegion,
+  RegionDecisionContext,
   RegionRecord,
-  SmsPreviewResponse,
 } from "@/lib/types";
 
 const CrisisMap = dynamic(
@@ -36,47 +33,49 @@ const CrisisMap = dynamic(
     loading: () => (
       <section className="overflow-hidden rounded-[1rem] border border-[rgba(119,145,177,0.22)] bg-white shadow-[0_14px_32px_rgba(31,47,74,0.06)]">
         <div className="border-b border-[rgba(119,145,177,0.16)] px-4 py-3">
-          <h2 className="text-[1.1rem] font-semibold text-[var(--text)]">Dynamic Crisis Map</h2>
+          <h2 className="text-[1.1rem] font-semibold text-[var(--text)]">District Risk Map</h2>
         </div>
         <div className="p-4">
-          <div className="h-[370px] animate-pulse rounded-[0.9rem] bg-[linear-gradient(180deg,#dde5f0_0%,#eef3f9_100%)]" />
+          <div className="h-[420px] animate-pulse rounded-[0.9rem] bg-[linear-gradient(180deg,#dde5f0_0%,#eef3f9_100%)]" />
         </div>
       </section>
     ),
   },
 );
 
-type DetailState = {
-  analysis: DroughtAnalysis | null;
-  aidPlan: AidPlan | null;
-  sms: SmsPreviewResponse | null;
-  alert: AlertReportResponse | null;
-  radio: RadioScriptResponse | null;
-};
-
-const emptyDetailState: DetailState = {
-  analysis: null,
-  aidPlan: null,
-  sms: null,
-  alert: null,
-  radio: null,
-};
+const emptyDecisionContext: RegionDecisionContext | null = null;
 
 const navigationItems = [
   { label: "Dashboard", active: true, hasDot: false },
-  { label: "Crisis Map", active: false, hasDot: false },
-  { label: "Priority Communities", active: false, hasDot: false },
-  { label: "AI Risk Analyzer", active: false, hasDot: false },
-  { label: "Alert Center", active: false, hasDot: true },
+  { label: "District Map", active: false, hasDot: false },
+  { label: "Analysis Center", active: false, hasDot: true },
+  { label: "Logistics Window", active: false, hasDot: false },
+  { label: "Alert Center", active: false, hasDot: false },
 ];
+
+function formatHeaderTime(value?: string | null) {
+  if (!value) {
+    return "Awaiting sync";
+  }
+
+  return new Intl.DateTimeFormat("en-GB", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "UTC",
+  }).format(new Date(value));
+}
 
 export function DashboardClient() {
   const [regions, setRegions] = useState<RegionRecord[]>([]);
   const [rankings, setRankings] = useState<RankedRegion[]>([]);
-  const [selectedRegionName, setSelectedRegionName] = useState("");
-  const [details, setDetails] = useState<DetailState>(emptyDetailState);
+  const [analysisCenterItems, setAnalysisCenterItems] = useState<AnalysisCenterItem[]>([]);
+  const [districtGeoJson, setDistrictGeoJson] = useState<DistrictGeoJson | null>(null);
+  const [rainfallStatus, setRainfallStatus] = useState<RainfallStatus | null>(null);
+  const [selectedRegionId, setSelectedRegionId] = useState("");
+  const [decisionContext, setDecisionContext] = useState<RegionDecisionContext | null>(emptyDecisionContext);
   const [isBootstrapping, setIsBootstrapping] = useState(true);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
+  const [isRefreshingRainfall, setIsRefreshingRainfall] = useState(false);
   const [bootstrapError, setBootstrapError] = useState("");
   const [detailError, setDetailError] = useState("");
   const [reloadToken, setReloadToken] = useState(0);
@@ -87,21 +86,28 @@ export function DashboardClient() {
     async function bootstrap() {
       try {
         setBootstrapError("");
-        const [regionsData, rankingsData] = await Promise.all([
-          fetchRegions(),
-          fetchRankings(),
+        const [bootstrapData, geoData, analysisCenterData] = await Promise.all([
+          fetchDashboardBootstrap(),
+          fetchDistrictGeoJson(),
+          fetchAnalysisCenter(),
         ]);
 
         if (cancelled) {
           return;
         }
 
-        setRegions(regionsData);
-        setRankings(rankingsData.regions);
+        setRegions(bootstrapData.regions);
+        setRankings(bootstrapData.rankings);
+        setRainfallStatus(bootstrapData.rainfallStatus);
+        setDistrictGeoJson(geoData);
+        setAnalysisCenterItems(analysisCenterData.items);
 
-        const preferredRegion =
-          rankingsData.regions[0]?.regionName ?? regionsData[0]?.name ?? "";
-        setSelectedRegionName(preferredRegion);
+        const preferredRegionId =
+          analysisCenterData.items[0]?.region.id ??
+          bootstrapData.rankings[0]?.regionId ??
+          bootstrapData.regions[0]?.id ??
+          "";
+        setSelectedRegionId(preferredRegionId);
       } catch (bootstrapFailure) {
         if (!cancelled) {
           setBootstrapError(
@@ -124,7 +130,7 @@ export function DashboardClient() {
   }, [reloadToken]);
 
   useEffect(() => {
-    if (!selectedRegionName) {
+    if (!selectedRegionId) {
       return;
     }
 
@@ -133,20 +139,14 @@ export function DashboardClient() {
 
     async function loadDetails() {
       try {
-        const [analysis, aidPlan, sms, alert, radio] = await Promise.all([
-          fetchRegionAnalysis(selectedRegionName),
-          fetchAidPlan(selectedRegionName),
-          fetchSms(selectedRegionName),
-          fetchAlert(selectedRegionName),
-          fetchRadioScript(selectedRegionName),
-        ]);
+        const context = await fetchRegionDecisionContext(selectedRegionId);
 
         if (cancelled) {
           return;
         }
 
         startTransition(() => {
-          setDetails({ analysis, aidPlan, sms, alert, radio });
+          setDecisionContext(context);
           setDetailError("");
         });
       } catch (detailFailure) {
@@ -168,32 +168,33 @@ export function DashboardClient() {
     return () => {
       cancelled = true;
     };
-  }, [selectedRegionName]);
+  }, [selectedRegionId]);
 
   const selectedRegion =
-    regions.find((region) => region.name === selectedRegionName) ?? null;
+    decisionContext?.region ??
+    regions.find((region) => region.id === selectedRegionId) ??
+    null;
 
   const selectedRanking = useMemo(
-    () => rankings.find((region) => region.regionName === selectedRegionName) ?? null,
-    [rankings, selectedRegionName],
+    () => rankings.find((region) => region.regionId === selectedRegionId) ?? null,
+    [rankings, selectedRegionId],
   );
 
-  const riskByRegion = useMemo(
+  const riskByRegionId = useMemo(
     () =>
       rankings.reduce<Record<string, RankedRegion["riskLevel"]>>((accumulator, region) => {
-        accumulator[region.regionName] = region.riskLevel;
+        accumulator[region.regionId] = region.riskLevel;
         return accumulator;
       }, {}),
     [rankings],
   );
 
-  function handleSelectRegion(regionName: string) {
-    if (regionName === selectedRegionName) {
+  function handleSelectRegion(regionId: string) {
+    if (regionId === selectedRegionId) {
       return;
     }
 
-    setSelectedRegionName(regionName);
-    setDetails(emptyDetailState);
+    setSelectedRegionId(regionId);
     setDetailError("");
   }
 
@@ -201,6 +202,17 @@ export function DashboardClient() {
     setIsBootstrapping(true);
     setBootstrapError("");
     setReloadToken((current) => current + 1);
+  }
+
+  async function handleRefreshRainfall() {
+    try {
+      setIsRefreshingRainfall(true);
+      const nextStatus = await refreshRainfallFeed();
+      setRainfallStatus(nextStatus);
+      setReloadToken((current) => current + 1);
+    } finally {
+      setIsRefreshingRainfall(false);
+    }
   }
 
   return (
@@ -250,8 +262,11 @@ export function DashboardClient() {
         </aside>
 
         <section className="min-w-0 px-4 py-4 md:px-5 lg:px-6">
-          <div className="mx-auto flex max-w-[1240px] flex-col gap-4">
-            <Header />
+          <div className="mx-auto flex max-w-[1320px] flex-col gap-4">
+            <Header
+              lastUpdateLabel={formatHeaderTime(rainfallStatus?.lastSuccessAt)}
+              rainfallStatusLabel={rainfallStatus?.status ?? "loading"}
+            />
             <StatStrip
               regions={regions}
               rankings={rankings}
@@ -260,10 +275,10 @@ export function DashboardClient() {
             <section className="flex flex-wrap items-center justify-between gap-3 rounded-[0.95rem] border border-[rgba(119,145,177,0.18)] bg-white px-4 py-3 shadow-[0_10px_24px_rgba(31,47,74,0.05)]">
               <div>
                 <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">
-                  Focused Region
+                  Focused District
                 </p>
                 <p className="mt-1 text-sm font-semibold text-[var(--text)]">
-                  {selectedRegionName || "Waiting for backend selection"}
+                  {selectedRegion?.name || "Waiting for backend selection"}
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.12em]">
@@ -271,7 +286,7 @@ export function DashboardClient() {
                   {isBootstrapping ? "Loading dashboard" : "Dashboard synced"}
                 </span>
                 <span className={`rounded-full px-3 py-2 ${isLoadingDetails ? "bg-[rgba(246,166,35,0.14)] text-[var(--warning)]" : "bg-[rgba(24,183,119,0.12)] text-[var(--stable)]"}`}>
-                  {isLoadingDetails ? "Refreshing detail flow" : "Selection ready"}
+                  {isLoadingDetails ? "Refreshing decision flow" : "Decision flow ready"}
                 </span>
               </div>
             </section>
@@ -289,56 +304,65 @@ export function DashboardClient() {
             ) : null}
             {detailError ? (
               <section className="rounded-[1.1rem] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 shadow-[0_10px_24px_rgba(245,158,11,0.08)]">
-                Detail flow for {selectedRegionName || "the selected region"} could not be refreshed. Existing data remains on screen.
+                Decision flow for {selectedRegion?.name || "the selected district"} could not be refreshed. Existing data remains on screen.
               </section>
             ) : null}
             <div className="grid gap-4 xl:grid-cols-[minmax(0,1.72fr)_340px]">
               <CrisisMap
                 regions={regions}
-                selectedRegionName={selectedRegionName}
-                analysis={details.analysis}
-                aidPlan={details.aidPlan}
+                districtGeoJson={districtGeoJson}
+                selectedRegionId={selectedRegionId}
+                analysis={decisionContext?.analysis ?? null}
+                aidPlan={decisionContext?.aidPlan ?? null}
                 isLoading={isBootstrapping || isLoadingDetails}
                 onSelectRegion={handleSelectRegion}
-                riskByRegion={riskByRegion}
+                riskByRegionId={riskByRegionId}
               />
               <CrisisRanking
                 rankings={rankings}
-                selectedRegionName={selectedRegionName}
+                selectedRegionName={selectedRegion?.name ?? ""}
                 isLoading={isBootstrapping}
-                onSelectRegion={handleSelectRegion}
+                onSelectRegion={(regionName) => {
+                  const nextRegion = regions.find((region) => region.name === regionName);
+                  if (nextRegion) {
+                    handleSelectRegion(nextRegion.id);
+                  }
+                }}
               />
             </div>
-            <div className="grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(340px,0.8fr)]">
-              <RegionAnalyzer
-                region={selectedRegion}
-                analysis={details.analysis}
-                isLoading={isLoadingDetails}
-              />
-              <AlertPanel
-                region={selectedRegion}
-                analysis={details.analysis}
-                alertReport={details.alert?.report ?? ""}
-                radioScript={details.radio?.script ?? ""}
-                isLoading={isLoadingDetails}
-              />
-            </div>
+            <AnalysisCenter
+              items={analysisCenterItems}
+              selectedRegionId={selectedRegionId}
+              isLoading={isBootstrapping}
+              rainfallStatus={rainfallStatus}
+              isRefreshingRainfall={isRefreshingRainfall}
+              onSelectRegion={handleSelectRegion}
+              onRefreshRainfall={handleRefreshRainfall}
+            />
+            <DecisionSupportPanel
+              region={selectedRegion}
+              analysis={decisionContext?.analysis ?? null}
+              aidPlan={decisionContext?.aidPlan ?? null}
+              alertReport={decisionContext?.alert.report ?? ""}
+              radioScript={decisionContext?.radio.script ?? ""}
+              isLoading={isLoadingDetails}
+            />
             <div className="grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(340px,0.8fr)]">
               <WaterFinder
                 region={selectedRegion}
-                aidPlan={details.aidPlan}
-                analysis={details.analysis}
+                aidPlan={decisionContext?.aidPlan ?? null}
+                analysis={decisionContext?.analysis ?? null}
                 isLoading={isLoadingDetails}
               />
               <SMSPreview
-                regionName={selectedRegionName}
-                sms={details.sms}
+                regionName={selectedRegion?.name ?? ""}
+                sms={decisionContext?.sms ?? null}
                 isLoading={isLoadingDetails}
                 ranking={selectedRanking}
               />
             </div>
             <footer className="rounded-[1rem] bg-[var(--shell)] px-4 py-3 text-[10px] uppercase tracking-[0.2em] text-white/35">
-              Data Sources: NASA Climate Data  HDX Somalia  WorldPop  WPDx
+              Data Sources: HDX Somalia Boundaries  Rainfall Feed  WorldPop  WPDx
             </footer>
           </div>
         </section>

@@ -47,6 +47,17 @@ export type RankingsResponse = {
   regions: RankedRegion[];
 };
 
+export type RainfallStatus = {
+  status: string;
+  source?: string | null;
+  lastAttemptedAt?: string | null;
+  lastSuccessAt?: string | null;
+  importedCount: number;
+  totalObservations: number;
+  nextScheduledRefreshAt?: string | null;
+  message?: string | null;
+};
+
 export type DroughtAnalysis = {
   regionId: string;
   regionName: string;
@@ -74,7 +85,19 @@ export type AidPlan = {
   populationServed: number;
   livestockServed: number;
   litersRequiredPerDay: number;
+  litersRequired3Day: number;
+  litersRequired7Day: number;
   waterTrucksRequired: number;
+  truckTripsPerDay: number;
+  truckTripsFor3DayWindow: number;
+  truckTripsFor7DayWindow: number;
+  stagingWindowHours: number;
+  refillCycleHours: number;
+  convoyPriority: string;
+  nearestWaterSourceName: string;
+  nearestWaterDistanceKm: number;
+  nearestWaterDirection: string;
+  sourceCapacity: string;
   recommendedAction: string;
   planningStatus: string;
   planningBasis: string[];
@@ -108,4 +131,49 @@ export type AlertReportResponse = {
 
 export type RadioScriptResponse = {
   script: string;
+};
+
+export type DashboardBootstrapResponse = {
+  regions: RegionRecord[];
+  rankings: RankedRegion[];
+  rainfallStatus: RainfallStatus;
+};
+
+export type RegionDecisionContext = {
+  region: RegionRecord;
+  analysis: DroughtAnalysis;
+  aidPlan: AidPlan;
+  waterNavigation: WaterNavigation;
+  sms: SmsPreviewResponse;
+  alert: AlertReportResponse;
+  radio: RadioScriptResponse;
+};
+
+export type AnalysisCenterItem = {
+  region: RegionRecord;
+  ranking: RankedRegion;
+  analysis: DroughtAnalysis;
+  aidPlan: AidPlan;
+  waterNavigation: WaterNavigation;
+};
+
+export type AnalysisCenterResponse = {
+  total: number;
+  generatedAt: string;
+  items: AnalysisCenterItem[];
+};
+
+export type GeoFeature = {
+  type: string;
+  properties: Record<string, unknown>;
+  geometry: {
+    type: string;
+    coordinates: unknown;
+  };
+};
+
+export type DistrictGeoJson = {
+  type: "FeatureCollection";
+  name?: string;
+  features: GeoFeature[];
 };

@@ -17,6 +17,10 @@ class Settings(BaseSettings):
     ai_provider: str = "deterministic"
     rate_limit_requests: int = 20
     rate_limit_window_seconds: int = 60
+    rainfall_feed_url: str | None = None
+    rainfall_feed_path: str | None = None
+    rainfall_auto_refresh_enabled: bool = False
+    rainfall_refresh_interval_minutes: int = 60
 
 
 @lru_cache
