@@ -1,9 +1,9 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { startTransition, useEffect, useMemo, useState } from "react";
 
 import { AlertPanel } from "@/components/AlertPanel";
-import { CrisisMapPlaceholder } from "@/components/CrisisMapPlaceholder";
 import { CrisisRanking } from "@/components/CrisisRanking";
 import { Header } from "@/components/Header";
 import { RegionAnalyzer } from "@/components/RegionAnalyzer";
@@ -28,6 +28,23 @@ import type {
   SmsPreviewResponse,
   WaterNavigation,
 } from "@/lib/types";
+
+const CrisisMap = dynamic(
+  () => import("@/components/CrisisMap").then((module) => module.CrisisMap),
+  {
+    ssr: false,
+    loading: () => (
+      <section className="overflow-hidden rounded-[1rem] border border-[rgba(119,145,177,0.22)] bg-white shadow-[0_14px_32px_rgba(31,47,74,0.06)]">
+        <div className="border-b border-[rgba(119,145,177,0.16)] px-4 py-3">
+          <h2 className="text-[1.1rem] font-semibold text-[var(--text)]">Dynamic Crisis Map</h2>
+        </div>
+        <div className="p-4">
+          <div className="h-[370px] animate-pulse rounded-[0.9rem] bg-[linear-gradient(180deg,#dde5f0_0%,#eef3f9_100%)]" />
+        </div>
+      </section>
+    ),
+  },
+);
 
 type DetailState = {
   analysis: DroughtAnalysis | null;
@@ -82,6 +99,7 @@ export function DashboardClient() {
         const preferredRegion =
           rankingsData.regions[0]?.regionName ?? regionsData[0]?.name ?? "";
         setSelectedRegionName(preferredRegion);
+        setError("");
       } catch (bootstrapError) {
         if (!cancelled) {
           setError(
@@ -127,6 +145,7 @@ export function DashboardClient() {
 
         startTransition(() => {
           setDetails({ analysis, water, sms, alert, radio });
+          setError("");
         });
       } catch (detailError) {
         if (!cancelled) {
@@ -155,6 +174,15 @@ export function DashboardClient() {
   const selectedRanking = useMemo(
     () => rankings.find((region) => region.regionName === selectedRegionName) ?? null,
     [rankings, selectedRegionName],
+  );
+
+  const riskByRegion = useMemo(
+    () =>
+      rankings.reduce<Record<string, RankedRegion["riskLevel"]>>((accumulator, region) => {
+        accumulator[region.regionName] = region.riskLevel;
+        return accumulator;
+      }, {}),
+    [rankings],
   );
 
   return (
@@ -217,11 +245,12 @@ export function DashboardClient() {
               </section>
             ) : null}
             <div className="grid gap-4 xl:grid-cols-[minmax(0,1.72fr)_340px]">
-              <CrisisMapPlaceholder
+              <CrisisMap
                 regions={regions}
                 selectedRegionName={selectedRegionName}
                 isLoading={isBootstrapping || isLoadingDetails}
                 onSelectRegion={setSelectedRegionName}
+                riskByRegion={riskByRegion}
               />
               <CrisisRanking
                 rankings={rankings}

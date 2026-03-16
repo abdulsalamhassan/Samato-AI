@@ -1,3 +1,4 @@
+@import "leaflet/dist/leaflet.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -46,4 +47,17 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+.leaflet-container {
+  font-family: inherit;
+  background: linear-gradient(180deg, #364153 0%, #2f3746 100%);
+}
+
+.leaflet-control-zoom a {
+  color: var(--text);
+}
+
+.leaflet-control-attribution {
+  display: none;
 }
