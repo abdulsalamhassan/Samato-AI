@@ -15,3 +15,12 @@ def list_rankings(
 ) -> RankingsResponse:
     regions = rank_regions(repository.get_all_regions(), limit=limit)
     return RankingsResponse(total=len(regions), regions=regions)
+
+
+@router.get("/crisis-ranking", response_model=RankingsResponse)
+def list_crisis_ranking(
+    limit: int | None = Query(default=None, ge=1, le=100),
+    repository: RegionRepository = Depends(get_region_repository),
+) -> RankingsResponse:
+    regions = rank_regions(repository.get_all_regions(), limit=limit)
+    return RankingsResponse(total=len(regions), regions=regions)

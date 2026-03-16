@@ -24,7 +24,7 @@ export function StatStrip({ regions, rankings, isLoading }: StatStripProps) {
   );
 
   const stats = [
-    { label: "Tracked Communities", value: isLoading ? "..." : String(regions.length) },
+    { label: "Tracked Districts", value: isLoading ? "..." : String(regions.length) },
     { label: "Critical", value: isLoading ? "..." : String(criticalToday) },
     { label: "At Risk", value: isLoading ? "..." : String(atRisk) },
     { label: "Stable", value: isLoading ? "..." : String(stable) },

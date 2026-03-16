@@ -26,6 +26,15 @@ def test_regions_endpoint_returns_seed_data(client):
     assert payload[0]["country"] == "Somalia"
 
 
+def test_districts_endpoint_alias_returns_seed_data(client):
+    response = client.get("/districts")
+
+    payload = response.json()
+    assert response.status_code == 200
+    assert len(payload) >= 6
+    assert payload[0]["district"]
+
+
 def test_rankings_endpoint_returns_computed_priority_list(client):
     response = client.get("/rankings?limit=2")
 
@@ -38,6 +47,15 @@ def test_rankings_endpoint_returns_computed_priority_list(client):
         "PREPARE_WATER_DELIVERY",
         "DISPATCH_WATER_AND_MOVE_COMMUNITY",
     }
+
+
+def test_crisis_ranking_endpoint_alias_returns_computed_priority_list(client):
+    response = client.get("/crisis-ranking?limit=2")
+
+    payload = response.json()
+    assert response.status_code == 200
+    assert payload["total"] == 2
+    assert payload["regions"][0]["riskScore"] >= payload["regions"][1]["riskScore"]
 
 
 def test_analyze_region_endpoint_returns_drought_analysis(client):

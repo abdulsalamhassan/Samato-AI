@@ -22,7 +22,7 @@ export function CrisisRanking({
   return (
     <section className="overflow-hidden rounded-[1rem] border border-[rgba(119,145,177,0.22)] bg-white shadow-[0_14px_32px_rgba(31,47,74,0.06)]">
       <div className="border-b border-[rgba(119,145,177,0.16)] px-4 py-4">
-        <h2 className="text-[1.1rem] font-semibold text-[var(--text)]">Priority Communities</h2>
+        <h2 className="text-[1.1rem] font-semibold text-[var(--text)]">Priority Districts</h2>
       </div>
       <div className="grid gap-4 p-4">
         {isLoading ? (
@@ -85,7 +85,7 @@ export function CrisisRanking({
                     />
                   </div>
                   <p className="mt-2 text-xs text-[var(--muted)]">
-                    {isSelected ? "Live detail panels are locked to this region." : "Select to inspect full decision flow."}
+                    {isSelected ? "Live detail panels are locked to this district." : "Select to inspect full decision flow."}
                   </p>
                 </div>
               </button>
@@ -96,7 +96,7 @@ export function CrisisRanking({
           type="button"
           className="rounded-[0.55rem] bg-[var(--shell)] px-4 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-white shadow-[0_12px_22px_rgba(7,21,35,0.22)] transition hover:bg-[#0d233a]"
         >
-          Analyze All Regions
+          Analyze All Districts
         </button>
       </div>
     </section>
