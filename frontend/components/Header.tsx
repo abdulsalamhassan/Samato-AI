@@ -1,22 +1,21 @@
 export function Header() {
   return (
-    <header className="rounded-[2rem] border border-[var(--panel-border)] bg-[var(--panel)] p-6 shadow-[0_24px_80px_rgba(18,52,59,0.12)] backdrop-blur">
-      <p className="text-sm uppercase tracking-[0.35em] text-[var(--muted)]">
-        RCC 2026 · AI for Somalia
-      </p>
-      <div className="mt-4 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h1 className="text-4xl font-semibold md:text-6xl">SAMATO AI</h1>
-          <p className="mt-3 max-w-2xl text-base leading-7 text-[var(--muted)] md:text-lg">
-            Crisis detection, village prioritization, and simple Somali-language
-            alerts for drought-affected nomad communities.
-          </p>
-        </div>
-        <div className="grid gap-2 text-sm text-[var(--muted)]">
-          <span>Detect the crisis first.</span>
-          <span>Rank who needs help now.</span>
-          <span>Direct people to water clearly.</span>
-        </div>
+    <header className="flex flex-wrap items-center justify-between gap-3 rounded-[1rem] bg-[var(--shell)] px-4 py-3 text-white shadow-[0_14px_34px_rgba(7,21,35,0.2)]">
+      <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.18em] text-white/55">
+        <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-2 text-[10px] font-semibold text-white/72">
+          <span className="mr-2 inline-block h-2 w-2 rounded-full bg-[var(--stable)]" />
+          System: Online
+        </span>
+      </div>
+      <div className="flex flex-wrap items-center gap-4 text-[11px] uppercase tracking-[0.18em] text-white/48">
+        <span>Last Update</span>
+        <strong className="font-semibold text-white/82">16 Mar 2026, 08:42 UTC</strong>
+        <button
+          type="button"
+          className="rounded-lg border border-[rgba(47,111,237,0.45)] bg-[rgba(47,111,237,0.16)] px-3 py-2 text-[10px] font-semibold tracking-[0.16em] text-[#89b4ff]"
+        >
+          NGO Access Mode
+        </button>
       </div>
     </header>
   );

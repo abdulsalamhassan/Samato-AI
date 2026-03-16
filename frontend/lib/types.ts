@@ -23,6 +23,14 @@ export type RegionRecord = {
   days_since_rain: number;
 };
 
+export type WaterSourceRecord = {
+  id: string;
+  name: string;
+  coordinates: [number, number];
+  status: string;
+  notes?: string;
+};
+
 export type RankedRegion = {
   regionId: string;
   regionName: string;

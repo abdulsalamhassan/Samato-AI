@@ -1,9 +1,9 @@
 import type { RankedRegion } from "@/lib/types";
 
 const statusClassName = {
-  CRITICAL: "bg-red-100 text-red-700",
-  WARNING: "bg-amber-100 text-amber-700",
-  STABLE: "bg-emerald-100 text-emerald-700",
+  CRITICAL: "bg-[rgba(255,92,97,0.12)] text-[var(--critical)]",
+  WARNING: "bg-[rgba(246,166,35,0.14)] text-[var(--warning)]",
+  STABLE: "bg-[rgba(24,183,119,0.12)] text-[var(--stable)]",
 };
 
 type CrisisRankingProps = {
@@ -19,87 +19,73 @@ export function CrisisRanking({
   isLoading,
   onSelectRegion,
 }: CrisisRankingProps) {
-  if (isLoading) {
-    return (
-      <section className="rounded-[2rem] border border-[var(--panel-border)] bg-[var(--panel)] p-6">
-        <p className="text-sm uppercase tracking-[0.25em] text-[var(--muted)]">
-          Priority Rankings
-        </p>
-        <h2 className="mt-2 text-2xl font-semibold">Who needs water first</h2>
-        <div className="mt-6 rounded-[1.5rem] border border-dashed border-[var(--panel-border)] bg-white/60 p-6 text-sm text-[var(--muted)]">
-          Loading live risk rankings from the backend.
-        </div>
-      </section>
-    );
-  }
-
   return (
-    <section className="rounded-[2rem] border border-[var(--panel-border)] bg-[var(--panel)] p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm uppercase tracking-[0.25em] text-[var(--muted)]">
-            Priority Rankings
-          </p>
-          <h2 className="mt-2 text-2xl font-semibold">Who needs water first</h2>
-        </div>
+    <section className="overflow-hidden rounded-[1rem] border border-[rgba(119,145,177,0.22)] bg-white shadow-[0_14px_32px_rgba(31,47,74,0.06)]">
+      <div className="border-b border-[rgba(119,145,177,0.16)] px-4 py-4">
+        <h2 className="text-[1.1rem] font-semibold text-[var(--text)]">Priority Communities</h2>
       </div>
-      <div className="mt-6 grid gap-4">
-        {rankings.map((region, index) => (
-          <article
-            key={region.regionId}
-            className={`rounded-[1.5rem] border p-5 transition ${
-              selectedRegionName === region.regionName
-                ? "border-[#12343b] bg-white shadow-[0_16px_40px_rgba(18,52,59,0.12)]"
-                : "border-[var(--panel-border)] bg-white/70"
-            }`}
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs uppercase tracking-[0.25em] text-[var(--muted)]">
-                  #{index + 1} Priority
-                </p>
-                <h3 className="mt-2 text-xl font-semibold">
-                  {region.regionName}, {region.area}
-                </h3>
-                <p className="mt-2 text-sm text-[var(--muted)]">
-                  {region.recommendedAction}
-                </p>
-              </div>
-              <span
-                className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${statusClassName[region.riskLevel]}`}
+      <div className="grid gap-4 p-4">
+        {isLoading ? (
+          <div className="rounded-[0.9rem] border border-dashed border-[rgba(119,145,177,0.22)] px-4 py-6 text-sm text-[var(--muted)]">
+            Loading live risk rankings from the backend.
+          </div>
+        ) : (
+          rankings.slice(0, 5).map((region) => {
+            const progress = Math.max(10, Math.min(100, ((30 - region.estimatedDaysRemaining) / 30) * 100));
+
+            return (
+              <button
+                key={region.regionId}
+                type="button"
+                onClick={() => onSelectRegion(region.regionName)}
+                className={`rounded-[0.95rem] border px-4 py-4 text-left transition ${
+                  selectedRegionName === region.regionName
+                    ? "border-[rgba(47,111,237,0.32)] bg-[rgba(47,111,237,0.06)] shadow-[0_12px_20px_rgba(47,111,237,0.08)]"
+                    : "border-[rgba(119,145,177,0.18)] bg-[#fcfdff] hover:border-[rgba(47,111,237,0.25)]"
+                }`}
               >
-                {region.riskLevel}
-              </span>
-            </div>
-            <div className="mt-5 grid gap-3 text-sm text-[var(--muted)] md:grid-cols-3">
-              <div>
-                <p className="uppercase tracking-[0.2em]">Days Remaining</p>
-                <p className="mt-1 text-lg font-semibold text-[var(--text)]">
-                  {region.estimatedDaysRemaining} days
-                </p>
-              </div>
-              <div>
-                <p className="uppercase tracking-[0.2em]">Urgency Score</p>
-                <p className="mt-1 text-lg font-semibold text-[var(--text)]">
-                  {region.riskScore}
-                </p>
-              </div>
-              <div>
-                <p className="uppercase tracking-[0.2em]">Action Code</p>
-                <p className="mt-1 text-lg font-semibold text-[var(--text)] break-words">
-                  {region.actionCode}
-                </p>
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={() => onSelectRegion(region.regionName)}
-              className="mt-5 rounded-full border border-[#12343b]/20 px-4 py-2 text-sm font-semibold text-[#12343b] transition hover:border-[#12343b] hover:bg-[#12343b] hover:text-white"
-            >
-              Focus {region.regionName}
-            </button>
-          </article>
-        ))}
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-[1rem] font-semibold leading-none text-[var(--text)]">{region.regionName}</p>
+                    <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">
+                      {region.area}
+                      {region.estimatedDaysRemaining >= 0 ? `  POP. ${region.estimatedDaysRemaining * 900}` : ""}
+                    </p>
+                  </div>
+                  <span className={`rounded-md px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] ${statusClassName[region.riskLevel]}`}>
+                    {region.riskLevel}
+                  </span>
+                </div>
+                <div className="mt-4">
+                  <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--muted)]">
+                    <span>Survival Timeline</span>
+                    <span className={region.riskLevel === "CRITICAL" ? "text-[var(--critical)]" : "text-[var(--warning)]"}>
+                      {region.estimatedDaysRemaining}/30 Days
+                    </span>
+                  </div>
+                  <div className="mt-2 h-1.5 rounded-full bg-[#e8eef6]">
+                    <div
+                      className={`h-1.5 rounded-full ${
+                        region.riskLevel === "CRITICAL"
+                          ? "bg-[var(--critical)]"
+                          : region.riskLevel === "WARNING"
+                            ? "bg-[var(--warning)]"
+                            : "bg-[var(--stable)]"
+                      }`}
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                </div>
+              </button>
+            );
+          })
+        )}
+        <button
+          type="button"
+          className="rounded-[0.55rem] bg-[var(--shell)] px-4 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-white shadow-[0_12px_22px_rgba(7,21,35,0.22)] transition hover:bg-[#0d233a]"
+        >
+          Analyze All Regions
+        </button>
       </div>
     </section>
   );
