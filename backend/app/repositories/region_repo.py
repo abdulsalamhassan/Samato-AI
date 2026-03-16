@@ -1,12 +1,13 @@
 from pathlib import Path
 
-from app.models.data_pipeline import RainfallObservation, RegionBaseline
+from app.models.data_pipeline import PopulationRecord, RainfallObservation, RegionBaseline
 from app.models.region import Region
 from app.repositories.data_repository import JsonDataRepository
 from app.services.data_pipeline import build_regions
 
 BASELINE_FILE = Path(__file__).resolve().parents[1] / "data" / "region_baselines.json"
 RAINFALL_FILE = Path(__file__).resolve().parents[1] / "data" / "rainfall_observations.json"
+POPULATION_FILE = Path(__file__).resolve().parents[2] / "data" / "som_pplp_adm2_v2.csv"
 
 
 class RegionRepository:
@@ -14,9 +15,11 @@ class RegionRepository:
         self,
         baseline_file: Path = BASELINE_FILE,
         rainfall_file: Path = RAINFALL_FILE,
+        population_file: Path = POPULATION_FILE,
     ) -> None:
         self.baseline_file = baseline_file
         self.rainfall_file = rainfall_file
+        self.population_file = population_file
         self.data_repository = JsonDataRepository()
 
     def get_all_regions(self) -> list[Region]:
@@ -28,7 +31,21 @@ class RegionRepository:
             self.rainfall_file.name,
             RainfallObservation,
         )
-        return build_regions(baselines, observations)
+        population_records = self.data_repository.load_csv_many(
+            str(self.population_file),
+            PopulationRecord,
+        )
+        population_lookup = {
+            record.district_pcode.lower(): record.population_total
+            for record in population_records
+        }
+        population_lookup.update(
+            {
+                record.district_name.strip().lower(): record.population_total
+                for record in population_records
+            }
+        )
+        return build_regions(baselines, observations, population_lookup)
 
     def get_region_by_id(self, region_id: str) -> Region | None:
         return next(

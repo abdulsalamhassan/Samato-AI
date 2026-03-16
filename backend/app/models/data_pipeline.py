@@ -1,4 +1,4 @@
-from datetime import date
+﻿from datetime import date
 
 from pydantic import BaseModel, Field
 
@@ -19,6 +19,11 @@ class RegionBaseline(BaseModel):
     water_sources: list[str] = Field(default_factory=list)
     temperature_c: float | None = None
 
+
+class PopulationRecord(BaseModel):
+    district_pcode: str = Field(alias="admin2Pcode")
+    district_name: str = Field(alias="Admin2Name_en")
+    population_total: int = Field(alias="T_TL", ge=0)
 
 
 class RainfallObservation(BaseModel):

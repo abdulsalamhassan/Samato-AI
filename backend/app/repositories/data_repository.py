@@ -1,3 +1,4 @@
+import csv
 import json
 from pathlib import Path
 from typing import TypeVar
@@ -14,12 +15,26 @@ class JsonDataRepository:
         self.data_dir = data_dir
 
     def load_many(self, filename: str, model: type[TModel]) -> list[TModel]:
-        with (self.data_dir / filename).open("r", encoding="utf-8") as file:
+        path = Path(filename)
+        if not path.is_absolute():
+            path = self.data_dir / filename
+        with path.open("r", encoding="utf-8") as file:
             payload = json.load(file)
         return [model.model_validate(item) for item in payload]
 
+    def load_csv_many(self, filename: str, model: type[TModel]) -> list[TModel]:
+        path = Path(filename)
+        if not path.is_absolute():
+            path = self.data_dir / filename
+        with path.open("r", encoding="utf-8-sig", newline="") as file:
+            reader = csv.DictReader(file)
+            return [model.model_validate(row) for row in reader]
+
     def save_many(self, filename: str, records: list[BaseModel]) -> None:
-        with (self.data_dir / filename).open("w", encoding="utf-8") as file:
+        path = Path(filename)
+        if not path.is_absolute():
+            path = self.data_dir / filename
+        with path.open("w", encoding="utf-8") as file:
             json.dump(
                 [record.model_dump(mode="json", by_alias=True) for record in records],
                 file,

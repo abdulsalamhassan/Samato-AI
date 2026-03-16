@@ -9,10 +9,12 @@ SIGNIFICANT_RAINFALL_MM = 1.0
 def build_regions(
     baselines: list[RegionBaseline],
     observations: list[RainfallObservation],
+    population_by_district: dict[str, int] | None = None,
     reference_date: date | None = None,
 ) -> list[Region]:
     effective_date = reference_date or datetime.now(UTC).date()
     observation_map = _latest_significant_rainfall_by_region(observations)
+    population_lookup = {key.lower(): value for key, value in (population_by_district or {}).items()}
 
     return [
         Region(
@@ -26,7 +28,7 @@ def build_regions(
             latitude=baseline.latitude,
             longitude=baseline.longitude,
             area_sqkm=baseline.area_sqkm,
-            population=baseline.population,
+            population=_resolve_population(baseline, population_lookup),
             livestock=baseline.livestock,
             water_sources=baseline.water_sources,
             temperature_c=baseline.temperature_c,
@@ -37,6 +39,26 @@ def build_regions(
         )
         for baseline in baselines
     ]
+
+
+def _resolve_population(
+    baseline: RegionBaseline,
+    population_lookup: dict[str, int],
+) -> int | None:
+    if baseline.population is not None:
+        return baseline.population
+
+    keys = [
+        baseline.district_pcode or "",
+        baseline.id,
+        baseline.name,
+        baseline.district,
+    ]
+    for key in keys:
+        normalized_key = key.strip().lower()
+        if normalized_key and normalized_key in population_lookup:
+            return population_lookup[normalized_key]
+    return None
 
 
 def _latest_significant_rainfall_by_region(
