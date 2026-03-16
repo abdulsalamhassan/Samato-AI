@@ -3,6 +3,10 @@ from app.models.navigation import NearestWaterResult
 from app.models.region import Region
 
 
+def _format_count(value: int | None) -> str:
+    return f"{value:,}" if value is not None else "Unknown"
+
+
 def build_alert_report(
     region: Region,
     analysis: DroughtAnalysis,
@@ -10,14 +14,15 @@ def build_alert_report(
 ) -> str:
     return (
         f"Region: {region.name}, {region.region}\n"
-        f"Population: {region.population:,}\n"
-        f"Livestock: {region.livestock:,}\n"
+        f"Population: {_format_count(region.population)}\n"
+        f"Livestock: {_format_count(region.livestock)}\n"
         f"Risk Level: {analysis.risk_level}\n"
         f"Water Remaining: {analysis.estimated_days_remaining} days\n"
         f"Action: {analysis.recommended_action}\n"
         f"Nearest Source: {navigation.water_source_name} ({navigation.distance_km} km {navigation.direction})\n"
         f"Coordinates: {region.latitude}, {region.longitude}"
     )
+
 
 
 def build_radio_script(
