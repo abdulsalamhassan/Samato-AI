@@ -1,10 +1,8 @@
-import type { DroughtAnalysis, RegionRecord } from "@/lib/types";
+import type { RegionRecord } from "@/lib/types";
 
 type CrisisMapPlaceholderProps = {
   regions: RegionRecord[];
   selectedRegionName: string;
-  selectedRegion: RegionRecord | null;
-  analysis: DroughtAnalysis | null;
   isLoading: boolean;
   onSelectRegion: (regionName: string) => void;
 };
@@ -19,8 +17,6 @@ const dots = [
 export function CrisisMapPlaceholder({
   regions,
   selectedRegionName,
-  selectedRegion,
-  analysis,
   isLoading,
   onSelectRegion,
 }: CrisisMapPlaceholderProps) {
@@ -80,48 +76,30 @@ export function CrisisMapPlaceholder({
         </div>
 
         <div className="mt-4 rounded-[1rem] border border-[rgba(119,145,177,0.18)] bg-[#fcfdff] px-4 py-4">
-          {isLoading || !selectedRegion ? (
-            <p className="text-sm text-[var(--muted)]">Loading selected district analysis.</p>
+          {isLoading ? (
+            <p className="text-sm text-[var(--muted)]">Loading region watchlist.</p>
           ) : (
-            <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_156px]">
-              <div>
-                <div className="flex items-center gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[rgba(47,111,237,0.08)] text-[var(--accent)]">
-                    <span className="text-lg font-bold">A</span>
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">AI Risk Analysis</p>
-                    <h3 className="text-[1.15rem] font-semibold text-[var(--text)]">{selectedRegion.name}</h3>
-                  </div>
-                </div>
-                <div className="mt-4 grid gap-4 md:grid-cols-3">
-                  <div>
-                    <p className="border-b border-[rgba(119,145,177,0.16)] pb-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">Rainfall Gap</p>
-                    <p className="mt-3 text-[2rem] font-bold leading-none text-[var(--critical)]">-{Math.min(selectedRegion.days_since_rain, 99)}%</p>
-                    <p className="mt-2 text-xs leading-5 text-[var(--muted)]">Severe meteorological drought confirmed via dry-day trend.</p>
-                  </div>
-                  <div>
-                    <p className="border-b border-[rgba(119,145,177,0.16)] pb-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">Pop. Pressure</p>
-                    <p className="mt-3 text-[2rem] font-bold leading-none text-[var(--text)]">{analysis?.riskLevel ?? "..."}</p>
-                    <p className="mt-2 text-xs leading-5 text-[var(--muted)]">{selectedRegion.population ? `Population ${selectedRegion.population.toLocaleString()}` : "Population data still being enriched."}</p>
-                  </div>
-                  <div>
-                    <p className="border-b border-[rgba(119,145,177,0.16)] pb-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">Infrastructure</p>
-                    <p className="mt-3 text-[2rem] font-bold leading-none text-[var(--critical)]">{analysis?.sourceCount ? "Limited" : "Poor"}</p>
-                    <p className="mt-2 text-xs leading-5 text-[var(--muted)]">{analysis?.recommendedAction ?? "Awaiting district analysis from the backend."}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="rounded-[0.95rem] border border-[rgba(255,92,97,0.18)] bg-[rgba(255,92,97,0.06)] px-4 py-4 text-right">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--critical)]">Risk Score</p>
-                <p className="mt-2 text-[2.3rem] font-bold leading-none text-[var(--critical)]">
-                  {analysis ? (analysis.riskScore / 10).toFixed(1) : "..."}
-                  <span className="text-base text-[rgba(255,92,97,0.6)]">/10</span>
-                </p>
-                <p className="mt-4 text-xs leading-5 text-[var(--muted)]">
-                  {analysis ? `${analysis.estimatedDaysRemaining} days remaining` : "Awaiting live scoring"}
-                </p>
-              </div>
+            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+              {regions.slice(0, 4).map((region) => (
+                <button
+                  key={region.id}
+                  type="button"
+                  onClick={() => onSelectRegion(region.name)}
+                  className={`rounded-[0.95rem] border px-4 py-3 text-left transition ${
+                    selectedRegionName === region.name
+                      ? "border-[rgba(47,111,237,0.32)] bg-[rgba(47,111,237,0.06)]"
+                      : "border-[rgba(119,145,177,0.16)] bg-white hover:border-[rgba(47,111,237,0.22)]"
+                  }`}
+                >
+                  <p className="text-sm font-semibold text-[var(--text)]">{region.name}</p>
+                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--muted)]">
+                    {region.region}
+                  </p>
+                  <p className="mt-3 text-xs text-[var(--muted)]">
+                    {region.days_since_rain} dry days tracked
+                  </p>
+                </button>
+              ))}
             </div>
           )}
         </div>

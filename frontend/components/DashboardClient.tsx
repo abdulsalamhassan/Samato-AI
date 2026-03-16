@@ -6,6 +6,7 @@ import { AlertPanel } from "@/components/AlertPanel";
 import { CrisisMapPlaceholder } from "@/components/CrisisMapPlaceholder";
 import { CrisisRanking } from "@/components/CrisisRanking";
 import { Header } from "@/components/Header";
+import { RegionAnalyzer } from "@/components/RegionAnalyzer";
 import { SMSPreview } from "@/components/SMSPreview";
 import { StatStrip } from "@/components/StatStrip";
 import { WaterFinder } from "@/components/WaterFinder";
@@ -219,8 +220,6 @@ export function DashboardClient() {
               <CrisisMapPlaceholder
                 regions={regions}
                 selectedRegionName={selectedRegionName}
-                selectedRegion={selectedRegion}
-                analysis={details.analysis}
                 isLoading={isBootstrapping || isLoadingDetails}
                 onSelectRegion={setSelectedRegionName}
               />
@@ -232,6 +231,11 @@ export function DashboardClient() {
               />
             </div>
             <div className="grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(340px,0.8fr)]">
+              <RegionAnalyzer
+                region={selectedRegion}
+                analysis={details.analysis}
+                isLoading={isLoadingDetails}
+              />
               <AlertPanel
                 region={selectedRegion}
                 analysis={details.analysis}
@@ -239,20 +243,20 @@ export function DashboardClient() {
                 radioScript={details.radio?.script ?? ""}
                 isLoading={isLoadingDetails}
               />
-              <div className="grid gap-4">
-                <WaterFinder
-                  region={selectedRegion}
-                  water={details.water}
-                  analysis={details.analysis}
-                  isLoading={isLoadingDetails}
-                />
-                <SMSPreview
-                  regionName={selectedRegionName}
-                  sms={details.sms}
-                  isLoading={isLoadingDetails}
-                  ranking={selectedRanking}
-                />
-              </div>
+            </div>
+            <div className="grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(340px,0.8fr)]">
+              <WaterFinder
+                region={selectedRegion}
+                water={details.water}
+                analysis={details.analysis}
+                isLoading={isLoadingDetails}
+              />
+              <SMSPreview
+                regionName={selectedRegionName}
+                sms={details.sms}
+                isLoading={isLoadingDetails}
+                ranking={selectedRanking}
+              />
             </div>
             <footer className="rounded-[1rem] bg-[var(--shell)] px-4 py-3 text-[10px] uppercase tracking-[0.2em] text-white/35">
               Data Sources: NASA Climate Data  HDX Somalia  WorldPop  WPDx
