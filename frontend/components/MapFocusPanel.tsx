@@ -1,9 +1,9 @@
-import type { DroughtAnalysis, RegionRecord, WaterNavigation } from "@/lib/types";
+import type { AidPlan, DroughtAnalysis, RegionRecord } from "@/lib/types";
 
 type MapFocusPanelProps = {
   region: RegionRecord | null;
   analysis: DroughtAnalysis | null;
-  water: WaterNavigation | null;
+  aidPlan: AidPlan | null;
   isLoading: boolean;
 };
 
@@ -13,7 +13,7 @@ const actionButtonClassName =
 export function MapFocusPanel({
   region,
   analysis,
-  water,
+  aidPlan,
   isLoading,
 }: MapFocusPanelProps) {
   const riskTone =
@@ -61,23 +61,21 @@ export function MapFocusPanel({
           {isLoading || !analysis ? (
             <p className="text-sm text-[var(--muted)]">Loading live region analysis.</p>
           ) : (
-            <>
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--critical)]">
-                    Risk Level: {analysis.riskLevel}
-                  </p>
-                  <p className="mt-4 text-sm text-[var(--muted)]">Water Remaining:</p>
-                  <p className="mt-1 text-[1.55rem] font-semibold text-[var(--text)]">
-                    {analysis.estimatedDaysRemaining} Days
-                  </p>
-                </div>
-                <p className={`text-[2rem] font-bold leading-none ${riskTone}`}>
-                  {(analysis.riskScore / 10).toFixed(1)}
-                  <span className="text-sm text-[var(--muted)]">/10</span>
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--critical)]">
+                  Risk Level: {analysis.riskLevel}
+                </p>
+                <p className="mt-4 text-sm text-[var(--muted)]">Estimated Water Remaining:</p>
+                <p className="mt-1 text-[1.55rem] font-semibold text-[var(--text)]">
+                  {analysis.estimatedDaysRemaining} Days
                 </p>
               </div>
-            </>
+              <p className={`text-[2rem] font-bold leading-none ${riskTone}`}>
+                {(analysis.riskScore / 10).toFixed(1)}
+                <span className="text-sm text-[var(--muted)]">/10</span>
+              </p>
+            </div>
           )}
         </div>
       </div>
@@ -85,17 +83,17 @@ export function MapFocusPanel({
       <div className="mt-5">
         <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
           <span className="h-2 w-2 rounded-full bg-[var(--accent)]" />
-          Navigation
+          Aid Planning
         </p>
         <div className="mt-3 rounded-[0.9rem] border border-[rgba(119,145,177,0.16)] bg-[#f8fbff] px-4 py-4">
-          {isLoading || !water ? (
-            <p className="text-sm text-[var(--muted)]">Loading nearest water source.</p>
+          {isLoading || !aidPlan ? (
+            <p className="text-sm text-[var(--muted)]">Loading NGO distribution recommendation.</p>
           ) : (
             <>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">Nearest Water Source</p>
-              <p className="mt-2 text-[1.15rem] font-semibold text-[var(--text)]">{water.waterSourceName}</p>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">Suggested Distribution Point</p>
+              <p className="mt-2 text-[1.15rem] font-semibold text-[var(--text)]">{aidPlan.distributionCenter}</p>
               <p className="mt-3 text-sm text-[var(--muted)]">
-                {water.distanceKm} km {water.direction} ({water.sourceStatus} status)
+                {aidPlan.waterTrucksRequired} truck loads, {aidPlan.populationServed.toLocaleString()} people served, planning only.
               </p>
             </>
           )}
@@ -105,17 +103,17 @@ export function MapFocusPanel({
       <div className="mt-5">
         <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
           <span className="h-2 w-2 rounded-full bg-[var(--accent)]" />
-          Alert Actions
+          Advisory Actions
         </p>
         <div className="mt-3 grid gap-2.5">
           <button type="button" className={`${actionButtonClassName} bg-[var(--accent)] text-white shadow-[0_10px_20px_rgba(47,111,237,0.24)]`}>
-            Generate SMS
+            View SMS Advisory
           </button>
           <button type="button" className={`${actionButtonClassName} bg-[var(--critical)] text-white shadow-[0_10px_20px_rgba(255,92,97,0.2)]`}>
-            Generate NGO Alert
+            View NGO Brief
           </button>
           <button type="button" className={`${actionButtonClassName} border border-[rgba(119,145,177,0.2)] bg-white text-[var(--text)]`}>
-            Generate Radio Script
+            View Radio Advisory
           </button>
         </div>
       </div>

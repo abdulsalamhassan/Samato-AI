@@ -1,11 +1,11 @@
 import type {
+  AidPlan,
   AlertReportResponse,
   DroughtAnalysis,
   RadioScriptResponse,
   RankingsResponse,
   RegionRecord,
   SmsPreviewResponse,
-  WaterNavigation,
 } from "@/lib/types";
 
 const API_BASE_URL =
@@ -44,8 +44,8 @@ export function fetchRegionAnalysis(regionName: string) {
   });
 }
 
-export function fetchNearestWater(regionName: string) {
-  return fetchJson<WaterNavigation>("/nearest-water", {
+export function fetchAidPlan(regionName: string) {
+  return fetchJson<AidPlan>("/aid-plan", {
     method: "POST",
     body: JSON.stringify({ regionName }),
   });

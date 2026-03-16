@@ -61,6 +61,30 @@ export type DroughtAnalysis = {
   recommendedAction: string;
 };
 
+export type AidPlan = {
+  regionId: string;
+  regionName: string;
+  area: string;
+  riskLevel: RiskLevel;
+  actionCode: ActionCode;
+  estimatedDaysRemaining: number;
+  distributionCenter: string;
+  distributionLatitude: number;
+  distributionLongitude: number;
+  populationServed: number;
+  livestockServed: number;
+  litersRequiredPerDay: number;
+  waterTrucksRequired: number;
+  recommendedAction: string;
+  planningStatus: string;
+  planningBasis: string[];
+};
+
+export type AidPlanListResponse = {
+  total: number;
+  plans: AidPlan[];
+};
+
 export type WaterNavigation = {
   regionId: string;
   regionName: string;

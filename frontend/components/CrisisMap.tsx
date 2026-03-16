@@ -4,13 +4,13 @@ import { useEffect } from "react";
 import { CircleMarker, MapContainer, Pane, TileLayer, useMap } from "react-leaflet";
 
 import { MapFocusPanel } from "@/components/MapFocusPanel";
-import type { DroughtAnalysis, RegionRecord, RiskLevel, WaterNavigation } from "@/lib/types";
+import type { AidPlan, DroughtAnalysis, RegionRecord, RiskLevel } from "@/lib/types";
 
 type CrisisMapProps = {
   regions: RegionRecord[];
   selectedRegionName: string;
   analysis: DroughtAnalysis | null;
-  water: WaterNavigation | null;
+  aidPlan: AidPlan | null;
   isLoading: boolean;
   onSelectRegion: (regionName: string) => void;
   riskByRegion: Record<string, RiskLevel>;
@@ -44,7 +44,7 @@ export function CrisisMap({
   regions,
   selectedRegionName,
   analysis,
-  water,
+  aidPlan,
   isLoading,
   onSelectRegion,
   riskByRegion,
@@ -136,7 +136,7 @@ export function CrisisMap({
         <MapFocusPanel
           region={selectedRegion}
           analysis={analysis}
-          water={water}
+          aidPlan={aidPlan}
           isLoading={isLoading}
         />
       </div>

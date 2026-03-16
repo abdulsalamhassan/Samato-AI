@@ -53,6 +53,26 @@ def test_analyze_region_endpoint_returns_drought_analysis(client):
     }
 
 
+def test_aid_plan_endpoint_returns_distribution_recommendation(client):
+    response = client.post("/aid-plan", json={"regionName": "Ceel Buur"})
+
+    payload = response.json()
+    assert response.status_code == 200
+    assert payload["regionName"] == "Ceel Buur"
+    assert payload["distributionCenter"] == "Ceel Buur District Center"
+    assert payload["planningStatus"] == "PLANNING_RECOMMENDATION_ONLY"
+    assert payload["planningBasis"]
+
+
+def test_aid_plan_list_endpoint_returns_ranked_plans(client):
+    response = client.get("/aid-plan?limit=2")
+
+    payload = response.json()
+    assert response.status_code == 200
+    assert payload["total"] == 2
+    assert len(payload["plans"]) == 2
+
+
 def test_nearest_water_endpoint_returns_navigation(client):
     response = client.post("/nearest-water", json={"regionName": "Ceel Buur"})
 
@@ -97,6 +117,7 @@ def test_generate_sms_endpoint_returns_429_when_rate_limit_exceeded(client):
     assert first.status_code == 200
     assert second.status_code == 429
     assert second.json()["detail"] == "Rate limit exceeded"
+
 
 
 def test_import_rainfall_endpoint_merges_observations(client):

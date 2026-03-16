@@ -11,8 +11,8 @@ import { SMSPreview } from "@/components/SMSPreview";
 import { StatStrip } from "@/components/StatStrip";
 import { WaterFinder } from "@/components/WaterFinder";
 import {
+  fetchAidPlan,
   fetchAlert,
-  fetchNearestWater,
   fetchRadioScript,
   fetchRankings,
   fetchRegionAnalysis,
@@ -20,13 +20,13 @@ import {
   fetchSms,
 } from "@/lib/api";
 import type {
+  AidPlan,
   AlertReportResponse,
   DroughtAnalysis,
   RadioScriptResponse,
   RankedRegion,
   RegionRecord,
   SmsPreviewResponse,
-  WaterNavigation,
 } from "@/lib/types";
 
 const CrisisMap = dynamic(
@@ -48,7 +48,7 @@ const CrisisMap = dynamic(
 
 type DetailState = {
   analysis: DroughtAnalysis | null;
-  water: WaterNavigation | null;
+  aidPlan: AidPlan | null;
   sms: SmsPreviewResponse | null;
   alert: AlertReportResponse | null;
   radio: RadioScriptResponse | null;
@@ -56,7 +56,7 @@ type DetailState = {
 
 const emptyDetailState: DetailState = {
   analysis: null,
-  water: null,
+  aidPlan: null,
   sms: null,
   alert: null,
   radio: null,
@@ -133,9 +133,9 @@ export function DashboardClient() {
 
     async function loadDetails() {
       try {
-        const [analysis, water, sms, alert, radio] = await Promise.all([
+        const [analysis, aidPlan, sms, alert, radio] = await Promise.all([
           fetchRegionAnalysis(selectedRegionName),
-          fetchNearestWater(selectedRegionName),
+          fetchAidPlan(selectedRegionName),
           fetchSms(selectedRegionName),
           fetchAlert(selectedRegionName),
           fetchRadioScript(selectedRegionName),
@@ -146,7 +146,7 @@ export function DashboardClient() {
         }
 
         startTransition(() => {
-          setDetails({ analysis, water, sms, alert, radio });
+          setDetails({ analysis, aidPlan, sms, alert, radio });
           setDetailError("");
         });
       } catch (detailFailure) {
@@ -297,7 +297,7 @@ export function DashboardClient() {
                 regions={regions}
                 selectedRegionName={selectedRegionName}
                 analysis={details.analysis}
-                water={details.water}
+                aidPlan={details.aidPlan}
                 isLoading={isBootstrapping || isLoadingDetails}
                 onSelectRegion={handleSelectRegion}
                 riskByRegion={riskByRegion}
@@ -326,7 +326,7 @@ export function DashboardClient() {
             <div className="grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(340px,0.8fr)]">
               <WaterFinder
                 region={selectedRegion}
-                water={details.water}
+                aidPlan={details.aidPlan}
                 analysis={details.analysis}
                 isLoading={isLoadingDetails}
               />

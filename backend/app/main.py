@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import alerts, analysis, data_pipeline, rankings, regions, water
+from app.api import aid, alerts, analysis, data_pipeline, rankings, regions, water
 from app.core.logging import add_logging_middleware, configure_logging
 from app.core.settings import get_settings
 
@@ -27,6 +27,7 @@ def healthcheck() -> dict[str, str]:
 
 app.include_router(regions.router)
 app.include_router(analysis.router)
+app.include_router(aid.router)
 app.include_router(water.router)
 app.include_router(rankings.router)
 app.include_router(alerts.router)
