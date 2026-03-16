@@ -296,6 +296,8 @@ export function DashboardClient() {
               <CrisisMap
                 regions={regions}
                 selectedRegionName={selectedRegionName}
+                analysis={details.analysis}
+                water={details.water}
                 isLoading={isBootstrapping || isLoadingDetails}
                 onSelectRegion={handleSelectRegion}
                 riskByRegion={riskByRegion}
