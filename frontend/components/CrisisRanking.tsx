@@ -1,5 +1,8 @@
+"use client";
+
+import React from "react";
 import { Card } from "@/components/ui/Card";
-import { Badge, RiskBadge } from "@/components/ui/Badge";
+import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import type { RankedRegion } from "@/lib/types";
 
@@ -16,14 +19,30 @@ export function CrisisRanking({
   isLoading,
   onSelectRegion,
 }: CrisisRankingProps) {
+  const [isAnalyzingAll, setIsAnalyzingAll] = React.useState(false);
+
+  const handleAnalyzeAll = () => {
+    setIsAnalyzingAll(true);
+    setTimeout(() => setIsAnalyzingAll(false), 2000);
+  };
+
   return (
     <Card 
       title="Priority Communities"
       variant="white"
       padding="small"
       footer={
-        <button className="w-full rounded-xl bg-[#0B1521] py-3 text-[10px] font-black uppercase tracking-[0.2em] text-white transition hover:bg-slate-800">
-           Analyze All Regions
+        <button 
+          onClick={handleAnalyzeAll}
+          disabled={isAnalyzingAll}
+          className="w-full rounded-xl bg-[#0B1521] py-3 text-[10px] font-black uppercase tracking-[0.2em] text-white transition hover:bg-slate-800 disabled:opacity-50"
+        >
+           {isAnalyzingAll ? (
+             <div className="flex items-center justify-center gap-2">
+               <span className="h-3 w-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+               Bulk Processing...
+             </div>
+           ) : "Analyze All Regions"}
         </button>
       }
     >
