@@ -14,11 +14,13 @@ def build_sms_template(
     navigation: NearestWaterResult,
     analysis: DroughtAnalysis,
 ) -> str:
+    # Senior Engineering Rule: Never promise aid or logistics we don't control.
+    # Focus only on high-trust risk awareness (Early Warning).
     urgency_word = "Degdeg" if analysis.risk_level == "CRITICAL" else "Fiiro gaar ah"
-    # User requested to avoid direct travel paths and focus on risk awareness
     return (
-        f"SAMATO_ALERT: Walaal, {region.name} biyuhu way sii dhamaanayaan. "
-        f"Halista abaarta ayaa dhow. Fadlan digtoonaaw. {urgency_word}!"
+        f"SAMATO_ALER: Walaal, deegaanka {region.name} waxaa ka jira abaar daran iyo biyo yari. "
+        f"Maamulka degmada iyo hay'adaha ayaa ka shaqeynaya xaaladda. "
+        f"Fadlan la xiriir odayaasha deegaanka. {urgency_word}!"
     )[:160]
 
 
@@ -29,15 +31,18 @@ def generate_sms(
     settings: "Settings",
 ) -> TextGenerationResult:
     fallback_text = build_sms_template(region, navigation, analysis)
-    # Update AI prompt to match the new 'risk-first' strategy instead of 'direct-to-source'
+    # ETHICAL AI COMMUNICATION MODEL
+    # External (Community): Risk Awareness & Early Warning Only
+    # Internal (NGO): Decision Intelligence & Planning (Calculated elsewhere)
     prompt = (
-        "Write one Somali SMS under 160 characters for a drought emergency alert. "
-        "Do NOT tell them where to go. Instead, announce that water is running out "
-        "and there is a high drought risk for nomadic communities. "
+        "Write one Somali SMS under 160 characters for a drought early warning alert. "
+        "STRICT RULE: Never promise aid arrival, water trucks, or specific travel paths. "
+        "STRICT RULE: Do not say 'Aid is coming'. "
+        "Instead, only announce severe drought risk and high water scarcity. "
+        "Advise them to seek information from local authorities or community leaders. "
         f"Location: {region.name}. "
         f"Risk Level: {analysis.risk_level}. "
-        "Keep it simple, urgent, and culturally direct. "
-        "Do not add English or explanation."
+        "Keep it ethically responsible, urgent, and culturally direct."
     )
     return generate_somali_sms(
         prompt=prompt,
