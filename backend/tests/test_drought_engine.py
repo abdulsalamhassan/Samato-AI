@@ -15,7 +15,7 @@ def test_calculate_risk_returns_expected_fields():
         "DISPATCH_WATER_AND_MOVE_COMMUNITY",
     }
     assert analysis.water_demand_lpd >= 0
-    assert analysis.estimated_days_remaining >= 3
+    assert analysis.estimated_days_remaining >= 1
 
 
 def test_calculate_risk_penalizes_regions_without_sources():

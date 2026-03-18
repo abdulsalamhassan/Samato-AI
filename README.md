@@ -1,23 +1,22 @@
 # SAMATO AI
 
-Scaffold for the SAMATO AI drought crisis detection and nomad alert system described in the project blueprint. 
+SAMATO AI is a drought monitoring and humanitarian decision-support prototype focused on Somalia. The platform combines district-level risk scoring, rainfall context, water-source routing, aid-planning guidance, and community alert generation.
 
 ## Workspace
 
-- `frontend/`: Next.js dashboard for crisis map, rankings, AI analyzer, alerts, and SMS preview
-- `backend/`: FastAPI API for rankings, risk analysis, nearest water lookup, SMS generation, and alert generation
+- `frontend/`: Next.js 15 dashboard for the crisis map, rankings, decision support, and alert previews
+- `backend/`: FastAPI service for drought analysis, ranking, water navigation, aid planning, rainfall refresh, and alert generation
 
-## Planned build order
+## Architecture
 
-1. Day 1: Map shell, seed data, rankings endpoint
-2. Day 2: Risk scoring and region detail flow
-3. Day 3: AI analysis integration
-4. Day 4: SMS, alert, and radio script generation
-5. Day 5: polish, error states, deployment
+- The backend assembles region records from local baseline JSON, rainfall observations, population CSV data, and satellite-derived priority inputs.
+- Risk scores, recommended actions, and logistics estimates are computed server-side.
+- The frontend consumes the backend API and renders the operator dashboard.
+- Optional AI providers can enhance some text outputs, but the system has deterministic fallbacks for core workflows.
 
-## Local setup
+## Local Development
 
-Frontend:
+### Frontend
 
 ```bash
 cd frontend
@@ -25,7 +24,7 @@ npm install
 npm run dev
 ```
 
-Backend:
+### Backend
 
 ```bash
 cd backend
@@ -35,10 +34,15 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-## Environment
+## Validation
 
-- Copy `frontend/.env.example` to `frontend/.env.local`
-- Copy `backend/.env.example` to `backend/.env`
+```bash
+cd backend
+pytest -q
+```
 
-AI integration is scaffolded behind environment variables so the prototype can be built incrementally without blocking on provider access.
-"# Samato" 
+## Environment Notes
+
+- Frontend uses `NEXT_PUBLIC_API_BASE_URL` when provided and otherwise defaults to `http://127.0.0.1:8000`.
+- Backend supports `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `AI_PROVIDER`, and rainfall refresh settings through `.env`.
+- No `.env.example` files are currently checked in, so create local env files manually if needed.

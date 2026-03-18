@@ -1,6 +1,14 @@
 # Backend
 
-FastAPI scaffold for SAMATO AI.
+FastAPI service layer for SAMATO AI.
+
+## Responsibilities
+
+- Build district records from baseline, rainfall, population, and satellite inputs
+- Compute drought risk and district rankings
+- Resolve nearest viable water sources
+- Generate aid-planning outputs plus SMS, alert, and radio content
+- Expose dashboard and rainfall-refresh endpoints
 
 ## Run
 
@@ -11,8 +19,8 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-## Next steps
+## Test
 
-- Improve drought scoring with richer heuristics
-- Add live AI integration behind a service abstraction
-- Expand routing for alerts, SMS, and radio scripts
+```bash
+pytest -q
+```

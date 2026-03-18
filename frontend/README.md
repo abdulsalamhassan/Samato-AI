@@ -1,15 +1,16 @@
 # Frontend
 
-Next.js dashboard scaffold for SAMATO AI.
+Next.js 15 operator dashboard for SAMATO AI.
+
+## Responsibilities
+
+- Render the Somalia district risk map with Leaflet
+- Show ranked districts and decision-support context
+- Present aid-planning and alert-preview workflows
+- Consume the FastAPI backend through `frontend/lib/api.ts`
 
 ## Scripts
 
 - `npm run dev`
 - `npm run build`
 - `npm run lint`
-
-## Next steps
-
-- Render Somalia crisis regions on the map
-- Connect ranking cards to backend data
-- Add analyzer, alerts, and SMS flows

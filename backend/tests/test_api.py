@@ -112,7 +112,8 @@ def test_generate_sms_endpoint_uses_deterministic_fallback(client, deterministic
     assert response.status_code == 200
     assert payload["provider"] == "deterministic"
     assert payload["usedFallback"] is True
-    assert "Ceel Dheer Borehole" in payload["message"]
+    assert "SAMATO_ALERT" in payload["message"]
+    assert "Ceel Buur" in payload["message"]
 
 
 def test_generate_sms_endpoint_returns_429_when_rate_limit_exceeded(client):

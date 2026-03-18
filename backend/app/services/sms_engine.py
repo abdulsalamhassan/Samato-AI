@@ -14,11 +14,10 @@ def build_sms_template(
     navigation: NearestWaterResult,
     analysis: DroughtAnalysis,
 ) -> str:
-    # Senior Engineering Rule: Never promise aid or logistics we don't control.
-    # Focus only on high-trust risk awareness (Early Warning).
+    # Keep community messaging limited to high-confidence early-warning language.
     urgency_word = "Degdeg" if analysis.risk_level == "CRITICAL" else "Fiiro gaar ah"
     return (
-        f"SAMATO_ALER: Walaal, deegaanka {region.name} waxaa ka jira abaar daran iyo biyo yari. "
+        f"SAMATO_ALERT: Walaal, deegaanka {region.name} waxaa ka jira abaar daran iyo biyo yari. "
         f"Maamulka degmada iyo hay'adaha ayaa ka shaqeynaya xaaladda. "
         f"Fadlan la xiriir odayaasha deegaanka. {urgency_word}!"
     )[:160]
@@ -31,9 +30,7 @@ def generate_sms(
     settings: "Settings",
 ) -> TextGenerationResult:
     fallback_text = build_sms_template(region, navigation, analysis)
-    # ETHICAL AI COMMUNICATION MODEL
-    # External (Community): Risk Awareness & Early Warning Only
-    # Internal (NGO): Decision Intelligence & Planning (Calculated elsewhere)
+    # Community SMS content stays intentionally narrow: awareness and escalation only.
     prompt = (
         "Write one Somali SMS under 160 characters for a drought early warning alert. "
         "STRICT RULE: Never promise aid arrival, water trucks, or specific travel paths. "
