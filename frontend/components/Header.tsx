@@ -15,10 +15,6 @@ export function Header({ lastUpdateLabel, rainfallStatusLabel }: HeaderProps) {
   return (
     <header className="flex flex-wrap items-center justify-between gap-6 px-12 py-4 bg-[#0B1521] text-white">
       <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-500">
-          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
-          System Online
-        </div>
         <div className={`rounded-full border px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] ${statusClassName}`}>
           Rainfall Sync: {rainfallStatusLabel}
         </div>
