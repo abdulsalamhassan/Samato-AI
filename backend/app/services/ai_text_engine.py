@@ -125,18 +125,20 @@ def build_radio_script(
     navigation: NearestWaterResult,
     settings: "Settings",
 ) -> str:
-    # Deterministic base
+    # Public radio messaging should announce risk without prescribing travel routes.
     base = (
         f"Digniin: Degmada {region.name} waxaa ka jirta biyo yari {analysis.risk_level.lower()}. "
-        f"Dadka deegaanka waxaa lagu wargelinayaa inay u socdaan "
-        f"{navigation.water_source_name} oo {int(round(navigation.distance_km))}km {navigation.direction} ka xigta."
+        "Dadka deegaanka waxaa lagu wargelinayaa inay la xiriiraan maamulka deegaanka "
+        "iyo odayaasha si ay u helaan xog rasmi ah iyo tilmaamo ammaan ah."
     )
     
     if settings.ai_provider == "openai" and settings.openai_api_key:
         prompt = (
             f"Write a Somali broadcast script for BBC Radio for {region.name}. "
-            f"Announce a {analysis.risk_level} drought alert. Advise pastoralists to move to {navigation.water_source_name}. "
-            "Keep it urgent and supportive. Max 3 sentences."
+            f"Announce a {analysis.risk_level} drought alert. "
+            "Do not name a destination, route, water point, or travel distance. "
+            "Direct listeners to local authorities and community leaders for verified guidance. "
+            "Keep it urgent, clear, and supportive. Max 3 sentences."
         )
         ai_script = _call_openai(prompt, settings.openai_api_key)
         if ai_script:

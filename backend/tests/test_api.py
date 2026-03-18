@@ -167,6 +167,23 @@ def test_dashboard_region_details_returns_aggregated_decision_context(client):
     assert payload["radio"]["script"]
 
 
+def test_generate_radio_script_does_not_direct_people_to_specific_water_points(
+    client,
+    deterministic_settings,
+):
+    app.dependency_overrides[get_settings] = lambda: deterministic_settings
+    try:
+        response = client.post("/radio-script", json={"regionName": "Zeylac"})
+    finally:
+        app.dependency_overrides.clear()
+
+    payload = response.json()
+    assert response.status_code == 200
+    assert "Cadaado Water Point" not in payload["script"]
+    assert "km" not in payload["script"]
+    assert "maamulka deegaanka" in payload["script"]
+
+
 def test_analysis_center_returns_batch_workflow_items(client):
     response = client.get("/analysis-center?limit=3")
 
