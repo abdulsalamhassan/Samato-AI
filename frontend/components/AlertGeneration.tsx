@@ -3,14 +3,9 @@
 import React from "react";
 import { Card } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
-import type { AidPlan, RankedRegion, SmsPreviewResponse } from "@/lib/types";
 
 type AlertGenerationProps = {
-  regionName: string;
-  sms: SmsPreviewResponse | null;
   isLoading: boolean;
-  ranking: RankedRegion | null;
-  aidPlan: AidPlan | null;
   alertReport: string;
   radioScript: string;
   aiAnalysis?: string;
@@ -18,9 +13,7 @@ type AlertGenerationProps = {
 };
 
 export function AlertGeneration({
-  sms,
   isLoading,
-  aidPlan,
   alertReport,
   radioScript,
   aiAnalysis,
@@ -53,69 +46,6 @@ export function AlertGeneration({
         padding="large"
       >
         <div className="flex flex-col gap-8">
-          {/* Internal Logistics (NGO ONLY) */}
-          <div className="rounded-2xl bg-[#0B1521]/5 p-6 border border-[#0B1521]/10">
-            <div className="flex items-center gap-4 mb-6">
-               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#0B1521] text-white shadow-lg">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7" />
-                  </svg>
-               </div>
-               <div>
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Internal Logistics Planning</p>
-                  <h3 className="text-sm font-black text-slate-800">NGO / Agency View Only</h3>
-               </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 border-t border-slate-100 pt-6">
-               <div>
-                  <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Est. Resources</p>
-                  <p className="text-xs font-black text-slate-800">{aidPlan?.truckTripsFor3DayWindow} Trucks</p>
-               </div>
-               <div>
-                  <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400">Target Range</p>
-                  <p className="text-xs font-black text-[#FF5C61]">{Math.round(aidPlan?.nearestWaterDistanceKm || 0)}km Zone</p>
-               </div>
-            </div>
-          </div>
-
-          {/* Messaging Preview - Small Phone Mockup Style */}
-          <div className="relative mx-auto w-full max-w-[280px]">
-             {/* Section Label */}
-             <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10 bg-white px-3 py-1 rounded-full border border-slate-100 shadow-sm">
-                <span className="text-[8px] font-black uppercase tracking-widest text-[#2F7FED]">Community Alert</span>
-             </div>
-
-             <div className="rounded-[2.5rem] bg-[#111827] p-2 ring-8 ring-slate-900 shadow-2xl">
-                <div className="relative h-[220px] overflow-hidden rounded-[2rem] bg-[#0A0F1A] p-4 text-white">
-                   <div className="flex items-center justify-between opacity-50 mb-4">
-                      <span className="text-[8px] font-bold">12:42</span>
-                      <div className="flex gap-1">
-                         <span className="h-1 w-1 rounded-full bg-white"></span>
-                         <span className="h-1 w-1 rounded-full bg-white"></span>
-                      </div>
-                   </div>
-                   
-                   <div className="space-y-3">
-                      <div className="rounded-2xl bg-[#1D2B44] p-3 text-[10px] leading-relaxed">
-                        <p className="font-bold mb-1 text-blue-400 tracking-wider">SAMATO_ALERT:</p>
-                        <span className="font-medium text-blue-50/90 italic">
-                          {sms?.message || "Generating vital resource message in Somali..."}
-                        </span>
-                      </div>
-                   </div>
-
-                   <div className="absolute bottom-4 left-1/2 -translate-x-1/2 h-1 w-12 rounded-full bg-white/20" />
-                </div>
-             </div>
-             
-             <div className="absolute -right-4 top-1/2 -translate-y-1/2 flex flex-col gap-4">
-                <div className="h-10 w-1 bg-slate-800 rounded-l" />
-                <div className="h-16 w-1 bg-slate-800 rounded-l" />
-             </div>
-          </div>
-
-          {/* AI-Generated Technical Intelligence (Pillar 3) */}
           <div className="rounded-2xl border border-blue-500/20 bg-blue-500/5 p-5">
              <div className="flex items-center gap-3 mb-4">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500 text-white shadow-lg">
@@ -143,7 +73,7 @@ export function AlertGeneration({
                 <p className="text-[10px] font-black uppercase tracking-widest text-[#2F7FED]">Advisory Actions</p>
             </div>
             <div className="grid gap-3">
-                <ActionButton 
+              <ActionButton 
                   label="View SMS Advisory" 
                   color="bg-[#2F7FED]" 
                   isLoading={isProcessing === 'sms'} 
@@ -183,7 +113,7 @@ export function AlertGeneration({
               </button>
            </div>
            <div className="rounded-xl bg-white p-5 text-sm font-medium leading-relaxed text-slate-700 shadow-sm border border-blue-100/50 whitespace-pre-wrap">
-              {activeAction === 'sms' && (radioScript.split('\n')[0] || "Alert: Water scarcity ahead...")}
+              {activeAction === 'sms' && "SMS advisory ready for operator review."}
               {activeAction === 'ngo' && alertReport}
               {activeAction === 'radio' && radioScript}
            </div>

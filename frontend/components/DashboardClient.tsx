@@ -125,10 +125,6 @@ export function DashboardClient() {
 
   const selectedRegion =
     decisionContext?.region ?? regions.find((region) => region.id === selectedRegionId) ?? null;
-  const selectedRanking = useMemo(
-    () => rankings.find((ranking) => ranking.regionId === selectedRegionId) ?? null,
-    [rankings, selectedRegionId],
-  );
   const riskByRegionId = useMemo(
     () =>
       rankings.reduce<Record<string, RankedRegion["riskLevel"]>>((accumulator, ranking) => {
@@ -237,11 +233,7 @@ export function DashboardClient() {
             </div>
             <div ref={alertsRef} className="scroll-mt-8">
               <AlertGeneration
-                regionName={selectedRegion?.name ?? ""}
-                sms={decisionContext?.sms ?? null}
                 isLoading={isLoadingDetails}
-                ranking={selectedRanking}
-                aidPlan={decisionContext?.aidPlan ?? null}
                 alertReport={decisionContext?.alert?.report ?? ""}
                 radioScript={decisionContext?.radio?.script ?? ""}
                 aiAnalysis={decisionContext?.aiAnalysis}
