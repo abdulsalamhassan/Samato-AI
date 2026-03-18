@@ -159,7 +159,6 @@ export function DashboardClient() {
                  districtGeoJson={districtGeoJson}
                  selectedRegionId={selectedRegionId}
                  analysis={decisionContext?.analysis ?? null}
-                 aidPlan={decisionContext?.aidPlan ?? null}
                  isLoading={isBootstrapping || isLoadingDetails}
                  onSelectRegion={handleSelectRegion}
                  riskByRegionId={riskByRegionId}
@@ -181,8 +180,6 @@ export function DashboardClient() {
                  region={selectedRegion}
                  analysis={decisionContext?.analysis ?? null}
                  aidPlan={decisionContext?.aidPlan ?? null}
-                 alertReport={decisionContext?.alert?.report ?? ""}
-                 radioScript={decisionContext?.radio?.script ?? ""}
                  isLoading={isLoadingDetails}
                />
                <AlertGeneration
@@ -191,6 +188,8 @@ export function DashboardClient() {
                  isLoading={isLoadingDetails}
                  ranking={selectedRanking}
                  aidPlan={decisionContext?.aidPlan ?? null}
+                 alertReport={decisionContext?.alert?.report ?? ""}
+                 radioScript={decisionContext?.radio?.script ?? ""}
                />
             </div>
 

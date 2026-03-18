@@ -13,7 +13,6 @@ import {
 
 import { MapFocusPanel } from "@/components/MapFocusPanel";
 import type {
-  AidPlan,
   DistrictGeoJson,
   DroughtAnalysis,
   RegionRecord,
@@ -25,7 +24,6 @@ type CrisisMapProps = {
   districtGeoJson: DistrictGeoJson | null;
   selectedRegionId: string;
   analysis: DroughtAnalysis | null;
-  aidPlan: AidPlan | null;
   isLoading: boolean;
   onSelectRegion: (regionId: string) => void;
   riskByRegionId: Record<string, RiskLevel>;
@@ -60,7 +58,6 @@ export function CrisisMap({
   districtGeoJson,
   selectedRegionId,
   analysis,
-  aidPlan,
   isLoading,
   onSelectRegion,
   riskByRegionId,
@@ -132,34 +129,16 @@ export function CrisisMap({
               <div
                 className="h-1.5 rounded-full bg-[var(--accent)]"
                 style={{
-                  width: `${Math.max(16, Math.min(100, (aidPlan?.truckTripsFor7DayWindow ?? 2) * 4))}%`,
+                  width: `${Math.max(16, Math.min(100, (analysis?.estimatedDaysRemaining ?? 2) * 4))}%`,
                 }}
               />
             </div>
-          </div>
-
-          <div className="mt-4 flex flex-wrap gap-2">
-            {regions.slice(0, 12).map((region) => (
-              <button
-                key={region.id}
-                type="button"
-                onClick={() => onSelectRegion(region.id)}
-                className={`rounded-full border px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.08em] transition ${
-                  selectedRegionId === region.id
-                    ? "border-[var(--accent)] bg-[rgba(47,111,237,0.1)] text-[var(--accent)]"
-                    : "border-[rgba(119,145,177,0.18)] bg-white text-[var(--muted)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
-                }`}
-              >
-                {region.name}
-              </button>
-            ))}
           </div>
         </div>
 
         <MapFocusPanel
           region={selectedRegion}
           analysis={analysis}
-          aidPlan={aidPlan}
           isLoading={isLoading}
         />
       </div>

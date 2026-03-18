@@ -18,12 +18,8 @@ export function DecisionSupportPanel({
   region,
   analysis,
   aidPlan,
-  alertReport,
-  radioScript,
   isLoading,
 }: DecisionSupportPanelProps) {
-  const [activeAction, setActiveAction] = React.useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = React.useState<string | null>(null);
 
   if (isLoading || !region || !analysis) {
     return (
@@ -39,14 +35,6 @@ export function DecisionSupportPanel({
       </Card>
     );
   }
-
-  const handleAction = (type: string) => {
-    setIsProcessing(type);
-    setTimeout(() => {
-       setIsProcessing(null);
-       setActiveAction(type);
-    }, 1200);
-  };
 
   const gap = Math.round(analysis.stressFactor * 10);
 
@@ -108,87 +96,8 @@ export function DecisionSupportPanel({
                  </p>
               </div>
            </div>
-
-           {/* Advisory Actions */}
-           <div className="space-y-6">
-              <div className="flex items-center gap-2">
-                 <div className="h-2 w-2 rounded-full bg-[#2F7FED]" />
-                 <p className="text-[10px] font-black uppercase tracking-widest text-[#2F7FED]">Advisory Actions</p>
-              </div>
-              <div className="grid gap-3">
-                 <ActionButton 
-                    label="View SMS Advisory" 
-                    color="bg-[#2F7FED]" 
-                    isLoading={isProcessing === 'sms'} 
-                    onClick={() => handleAction('sms')}
-                 />
-                 <ActionButton 
-                    label="View NGO Brief" 
-                    color="bg-[#FF5C61]" 
-                    isLoading={isProcessing === 'ngo'} 
-                    onClick={() => handleAction('ngo')}
-                 />
-                 <ActionButton 
-                    label="View Radio Advisory" 
-                    color="bg-white text-slate-800 border border-slate-200" 
-                    isLoading={isProcessing === 'radio'} 
-                    onClick={() => handleAction('radio')}
-                 />
-              </div>
-           </div>
         </div>
       </Card>
-
-      {/* Action Result Modal / In-page Expansion */}
-      {activeAction && (
-        <div className="rounded-2xl border border-blue-100 bg-blue-50 p-6 animate-in slide-in-from-top-4 duration-300">
-           <div className="flex items-center justify-between mb-4">
-              <h5 className="text-xs font-black uppercase text-blue-600 tracking-widest">
-                {activeAction === 'sms' && "Nomadic Emergency Message"}
-                {activeAction === 'ngo' && "Humanitarian Coordination Brief"}
-                {activeAction === 'radio' && "BBC Somali Broadcast Script"}
-              </h5>
-              <button 
-                onClick={() => setActiveAction(null)}
-                className="text-blue-400 hover:text-blue-600 font-bold text-xs"
-              >
-                DISMISS
-              </button>
-           </div>
-           <div className="rounded-xl bg-white p-5 text-sm font-medium leading-relaxed text-slate-700 shadow-sm border border-blue-100/50 whitespace-pre-wrap">
-              {activeAction === 'sms' && (radioScript.split('\n')[0] || "Alert: Water scarcity ahead...")}
-              {activeAction === 'ngo' && alertReport}
-              {activeAction === 'radio' && radioScript}
-           </div>
-        </div>
-      )}
     </div>
-  );
-}
-
-function ActionButton({ 
-  label, 
-  color, 
-  isLoading, 
-  onClick 
-}: { 
-  label: string; 
-  color: string; 
-  isLoading: boolean; 
-  onClick: () => void 
-}) {
-  return (
-    <button
-      onClick={onClick}
-      disabled={isLoading}
-      className={`relative w-full overflow-hidden rounded-xl py-4 flex items-center justify-center text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:brightness-95 active:scale-[0.98] ${color} ${!color.includes('white') ? 'text-white shadow-lg shadow-black/5' : 'shadow-none'}`}
-    >
-      {isLoading ? (
-        <div className="flex items-center gap-2">
-           <span className="h-3 w-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
-           Generating Intelligence...
-        </div>
-      ) : label}
-    </button>
   );
 }

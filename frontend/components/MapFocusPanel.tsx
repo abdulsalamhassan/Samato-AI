@@ -1,19 +1,14 @@
-import type { AidPlan, DroughtAnalysis, RegionRecord } from "@/lib/types";
+import type { DroughtAnalysis, RegionRecord } from "@/lib/types";
 
 type MapFocusPanelProps = {
   region: RegionRecord | null;
   analysis: DroughtAnalysis | null;
-  aidPlan: AidPlan | null;
   isLoading: boolean;
 };
-
-const actionButtonClassName =
-  "rounded-[0.7rem] px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.08em] transition";
 
 export function MapFocusPanel({
   region,
   analysis,
-  aidPlan,
   isLoading,
 }: MapFocusPanelProps) {
   const riskTone =
@@ -77,47 +72,6 @@ export function MapFocusPanel({
               </p>
             </div>
           )}
-        </div>
-      </div>
-
-      <div className="mt-5">
-        <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
-          <span className="h-2 w-2 rounded-full bg-[var(--accent)]" />
-          Aid Planning
-        </p>
-        <div className="mt-3 rounded-[0.9rem] border border-[rgba(119,145,177,0.16)] bg-[#f8fbff] px-4 py-4">
-          {isLoading || !aidPlan ? (
-            <p className="text-sm text-[var(--muted)]">Loading NGO distribution recommendation.</p>
-          ) : (
-            <>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">Suggested Distribution Point</p>
-              <p className="mt-2 text-[1.15rem] font-semibold text-[var(--text)]">{aidPlan.distributionCenter}</p>
-              <p className="mt-3 text-sm text-[var(--muted)]">
-                {aidPlan.truckTripsFor3DayWindow} trips in 3 days, {aidPlan.populationServed.toLocaleString()} people served, planning only.
-              </p>
-              <p className="mt-2 text-sm text-[var(--muted)]">
-                Route via {aidPlan.nearestWaterSourceName}, {aidPlan.nearestWaterDistanceKm} km {aidPlan.nearestWaterDirection}.
-              </p>
-            </>
-          )}
-        </div>
-      </div>
-
-      <div className="mt-5">
-        <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
-          <span className="h-2 w-2 rounded-full bg-[var(--accent)]" />
-          Advisory Actions
-        </p>
-        <div className="mt-3 grid gap-2.5">
-          <button type="button" className={`${actionButtonClassName} bg-[var(--accent)] text-white shadow-[0_10px_20px_rgba(47,111,237,0.24)]`}>
-            View SMS Advisory
-          </button>
-          <button type="button" className={`${actionButtonClassName} bg-[var(--critical)] text-white shadow-[0_10px_20px_rgba(255,92,97,0.2)]`}>
-            View NGO Brief
-          </button>
-          <button type="button" className={`${actionButtonClassName} border border-[rgba(119,145,177,0.2)] bg-white text-[var(--text)]`}>
-            View Radio Advisory
-          </button>
         </div>
       </div>
     </aside>
