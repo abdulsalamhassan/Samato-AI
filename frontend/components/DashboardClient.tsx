@@ -1,17 +1,16 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { startTransition, useEffect, useMemo, useState } from "react";
+import { startTransition, useEffect, useMemo, useState, useRef } from "react";
 
 import { Sidebar } from "@/components/Sidebar";
-import { Badge } from "@/components/ui/Badge";
-import { Card } from "@/components/ui/Card";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { StatStrip } from "@/components/StatStrip";
 import { CrisisRanking } from "@/components/CrisisRanking";
 import { DecisionSupportPanel } from "@/components/DecisionSupportPanel";
 import { Header } from "@/components/Header";
 import { AlertGeneration } from "@/components/AlertGeneration";
-import { StatStrip } from "@/components/StatStrip";
+import { Card } from "@/components/ui/Card";
+
 import {
   fetchDashboardBootstrap,
   fetchDistrictGeoJson,
@@ -39,27 +38,8 @@ const CrisisMap = dynamic(
 
 const emptyDecisionContext: RegionDecisionContext | null = null;
 
-const navigationItems = [
-  { label: "Dashboard", active: true },
-  { label: "Crisis Map", active: false },
-  { label: "Priority Communities", active: false },
-  { label: "AI Risk Analyzer", active: false },
-  { label: "Alert Center", active: false, hasDot: true },
-];
-
-function formatHeaderTime(value?: string | null) {
-  if (!value) return "---";
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZoneName: "short",
-  }).format(new Date(value));
-}
-
 export function DashboardClient() {
+  const [activeTab, setActiveTab] = useState("Dashboard");
   const [regions, setRegions] = useState<RegionRecord[]>([]);
   const [rankings, setRankings] = useState<RankedRegion[]>([]);
   const [districtGeoJson, setDistrictGeoJson] = useState<DistrictGeoJson | null>(null);
@@ -70,6 +50,20 @@ export function DashboardClient() {
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [bootstrapError, setBootstrapError] = useState("");
   const [reloadToken, setReloadToken] = useState(0);
+
+  // Refs for scrolling to sections
+  const mapRef = useRef<HTMLDivElement>(null);
+  const rankingRef = useRef<HTMLDivElement>(null);
+  const analysisRef = useRef<HTMLDivElement>(null);
+  const alertsRef = useRef<HTMLDivElement>(null);
+
+  const navigationItems = useMemo(() => [
+    { label: "Dashboard", active: activeTab === "Dashboard" },
+    { label: "Crisis Map", active: activeTab === "Crisis Map" },
+    { label: "Priority Communities", active: activeTab === "Priority Communities" },
+    { label: "AI Risk Analyzer", active: activeTab === "AI Risk Analyzer" },
+    { label: "Alert Center", active: activeTab === "Alert Center", hasDot: true },
+  ], [activeTab]);
 
   useEffect(() => {
     let cancelled = false;
@@ -130,11 +124,46 @@ export function DashboardClient() {
     setSelectedRegionId(regionId);
   }
 
+  const scrollToSection = (label: string) => {
+    setActiveTab(label);
+    const options: ScrollIntoViewOptions = { behavior: "smooth", block: "start" };
+    
+    switch (label) {
+      case "Dashboard":
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        break;
+      case "Crisis Map":
+        mapRef.current?.scrollIntoView(options);
+        break;
+      case "Priority Communities":
+        rankingRef.current?.scrollIntoView(options);
+        break;
+      case "AI Risk Analyzer":
+        analysisRef.current?.scrollIntoView(options);
+        break;
+      case "Alert Center":
+        alertsRef.current?.scrollIntoView(options);
+        break;
+    }
+  };
+
+  function formatHeaderTime(value?: string | null) {
+    if (!value) return "---";
+    return new Intl.DateTimeFormat("en-GB", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZoneName: "short",
+    }).format(new Date(value));
+  }
+
   return (
     <main className="flex h-screen overflow-hidden bg-[#E2E8F0] text-slate-800">
       {/* Persistent Sidebar */}
       <div className="h-screen w-[260px] flex-shrink-0">
-        <Sidebar items={navigationItems} onItemClick={(lbl) => console.log(lbl)} />
+        <Sidebar items={navigationItems} onItemClick={scrollToSection} />
       </div>
 
       {/* Content Area */}
@@ -154,43 +183,51 @@ export function DashboardClient() {
 
             {/* Row 1: Map and Priority */}
             <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
-               <CrisisMap
-                 regions={regions}
-                 districtGeoJson={districtGeoJson}
-                 selectedRegionId={selectedRegionId}
-                 analysis={decisionContext?.analysis ?? null}
-                 isLoading={isBootstrapping || isLoadingDetails}
-                 onSelectRegion={handleSelectRegion}
-                 riskByRegionId={riskByRegionId}
-               />
-               <CrisisRanking
-                 rankings={rankings}
-                 selectedRegionName={selectedRegion?.name ?? ""}
-                 isLoading={isBootstrapping}
-                 onSelectRegion={(regionName) => {
-                   const nextRegion = regions.find((region) => region.name === regionName);
-                   if (nextRegion) handleSelectRegion(nextRegion.id);
-                 }}
-               />
+               <div ref={mapRef} className="scroll-mt-8">
+                <CrisisMap
+                  regions={regions}
+                  districtGeoJson={districtGeoJson}
+                  selectedRegionId={selectedRegionId}
+                  analysis={decisionContext?.analysis ?? null}
+                  isLoading={isBootstrapping || isLoadingDetails}
+                  onSelectRegion={handleSelectRegion}
+                  riskByRegionId={riskByRegionId}
+                />
+               </div>
+               <div ref={rankingRef} className="scroll-mt-8">
+                <CrisisRanking
+                  rankings={rankings}
+                  selectedRegionName={selectedRegion?.name ?? ""}
+                  isLoading={isBootstrapping}
+                  onSelectRegion={(regionName) => {
+                    const nextRegion = regions.find((region) => region.name === regionName);
+                    if (nextRegion) handleSelectRegion(nextRegion.id);
+                  }}
+                />
+               </div>
             </div>
 
             {/* Row 2: AI Risk and Alert Generation */}
             <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
-               <DecisionSupportPanel
-                 region={selectedRegion}
-                 analysis={decisionContext?.analysis ?? null}
-                 aidPlan={decisionContext?.aidPlan ?? null}
-                 isLoading={isLoadingDetails}
-               />
-               <AlertGeneration
-                 regionName={selectedRegion?.name ?? ""}
-                 sms={decisionContext?.sms ?? null}
-                 isLoading={isLoadingDetails}
-                 ranking={selectedRanking}
-                 aidPlan={decisionContext?.aidPlan ?? null}
-                 alertReport={decisionContext?.alert?.report ?? ""}
-                 radioScript={decisionContext?.radio?.script ?? ""}
-               />
+               <div ref={analysisRef} className="scroll-mt-8">
+                <DecisionSupportPanel
+                  region={selectedRegion}
+                  analysis={decisionContext?.analysis ?? null}
+                  aidPlan={decisionContext?.aidPlan ?? null}
+                  isLoading={isLoadingDetails}
+                />
+               </div>
+               <div ref={alertsRef} className="scroll-mt-8">
+                <AlertGeneration
+                  regionName={selectedRegion?.name ?? ""}
+                  sms={decisionContext?.sms ?? null}
+                  isLoading={isLoadingDetails}
+                  ranking={selectedRanking}
+                  aidPlan={decisionContext?.aidPlan ?? null}
+                  alertReport={decisionContext?.alert?.report ?? ""}
+                  radioScript={decisionContext?.radio?.script ?? ""}
+                />
+               </div>
             </div>
 
             <footer className="mt-8 flex flex-wrap items-center justify-between gap-6 border-t border-slate-100 pt-8 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-400">
