@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager, suppress
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import aid, alerts, analysis, dashboard, data_pipeline, geography, rankings, regions, water
+from app.api import aid, alerts, analysis, dashboard, data_pipeline, geography, priority, rankings, regions, water
 from app.core.logging import add_logging_middleware, configure_logging
 from app.core.settings import get_settings
 from app.repositories.rainfall_repo import RainfallRepository
@@ -66,3 +66,4 @@ app.include_router(alerts.router)
 app.include_router(data_pipeline.router)
 app.include_router(dashboard.router)
 app.include_router(geography.router)
+app.include_router(priority.router)

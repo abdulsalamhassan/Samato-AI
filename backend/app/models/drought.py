@@ -21,3 +21,6 @@ class DroughtAnalysis(BaseModel):
     action_code: ActionCode = Field(alias="actionCode")
     estimated_days_remaining: int = Field(alias="estimatedDaysRemaining")
     recommended_action: str = Field(alias="recommendedAction")
+    drivers: list[str] = Field(default_factory=list)
+    confidence: float = 1.0
+    pastoral_vulnerability_index: float | None = Field(default=None, alias="pastoralVulnerabilityIndex")

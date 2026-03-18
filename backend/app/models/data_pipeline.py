@@ -1,4 +1,4 @@
-﻿from datetime import date
+from datetime import date
 
 from pydantic import BaseModel, Field
 
@@ -7,6 +7,7 @@ class RegionBaseline(BaseModel):
     id: str
     name: str
     district: str
+    district_type: str | None = None
     district_pcode: str | None = None
     region: str
     region_pcode: str | None = None

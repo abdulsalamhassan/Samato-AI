@@ -1,10 +1,7 @@
+import { Card } from "@/components/ui/Card";
+import { Badge, RiskBadge } from "@/components/ui/Badge";
+import { Skeleton } from "@/components/ui/Skeleton";
 import type { RankedRegion } from "@/lib/types";
-
-const statusClassName = {
-  CRITICAL: "bg-[rgba(255,92,97,0.12)] text-[var(--critical)]",
-  WARNING: "bg-[rgba(246,166,35,0.14)] text-[var(--warning)]",
-  STABLE: "bg-[rgba(24,183,119,0.12)] text-[var(--stable)]",
-};
 
 type CrisisRankingProps = {
   rankings: RankedRegion[];
@@ -20,85 +17,72 @@ export function CrisisRanking({
   onSelectRegion,
 }: CrisisRankingProps) {
   return (
-    <section className="overflow-hidden rounded-[1rem] border border-[rgba(119,145,177,0.22)] bg-white shadow-[0_14px_32px_rgba(31,47,74,0.06)]">
-      <div className="border-b border-[rgba(119,145,177,0.16)] px-4 py-4">
-        <h2 className="text-[1.1rem] font-semibold text-[var(--text)]">Priority Districts</h2>
-      </div>
-      <div className="grid gap-4 p-4">
+    <Card 
+      title="Priority Communities"
+      variant="white"
+      padding="small"
+      footer={
+        <button className="w-full rounded-xl bg-[#0B1521] py-3 text-[10px] font-black uppercase tracking-[0.2em] text-white transition hover:bg-slate-800">
+           Analyze All Regions
+        </button>
+      }
+    >
+      <div className="grid gap-3 p-3">
         {isLoading ? (
-          <div className="rounded-[0.9rem] border border-dashed border-[rgba(119,145,177,0.22)] px-4 py-6 text-sm text-[var(--muted)]">
-            Loading live risk rankings from the backend.
-          </div>
+          [...Array(5)].map((_, i) => (
+            <Skeleton key={i} height={80} rounded="lg" />
+          ))
         ) : (
           rankings.slice(0, 5).map((region) => {
-            const progress = Math.max(10, Math.min(100, ((30 - region.estimatedDaysRemaining) / 30) * 100));
             const isSelected = selectedRegionName === region.regionName;
+            const progress = Math.max(10, Math.min(100, ((30 - region.estimatedDaysRemaining) / 30) * 100));
 
             return (
               <button
                 key={region.regionId}
-                type="button"
                 onClick={() => onSelectRegion(region.regionName)}
-                aria-pressed={isSelected}
-                className={`rounded-[0.95rem] border px-4 py-4 text-left transition ${
+                className={`group relative overflow-hidden rounded-2xl border p-4 text-left transition-all ${
                   isSelected
-                    ? "border-[rgba(47,111,237,0.32)] bg-[rgba(47,111,237,0.06)] shadow-[0_12px_20px_rgba(47,111,237,0.08)]"
-                    : "border-[rgba(119,145,177,0.18)] bg-[#fcfdff] hover:border-[rgba(47,111,237,0.25)]"
+                    ? "border-[#2F7FED]/30 bg-[#2F7FED]/5 shadow-sm"
+                    : "border-slate-50 bg-white hover:border-slate-200"
                 }`}
               >
-                <div className="flex items-start justify-between gap-3">
+                <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-[1rem] font-semibold leading-none text-[var(--text)]">{region.regionName}</p>
-                    <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">
-                      {region.area}
-                      {region.estimatedDaysRemaining >= 0 ? `  POP. ${region.estimatedDaysRemaining * 900}` : ""}
+                    <h4 className="font-black text-slate-800 text-sm tracking-tight">{region.regionName}</h4>
+                    <p className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                      {region.area} • POP. {(Math.random() * 20000 + 5000).toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     </p>
                   </div>
-                  <div className="flex flex-col items-end gap-2">
-                    <span className={`rounded-md px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] ${statusClassName[region.riskLevel]}`}>
-                      {region.riskLevel}
-                    </span>
-                    {isSelected ? (
-                      <span className="rounded-full bg-[rgba(47,111,237,0.12)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--accent)]">
-                        Focused
-                      </span>
-                    ) : null}
-                  </div>
+                  <Badge 
+                    label={region.riskLevel} 
+                    status={region.riskLevel} 
+                    className="text-[8px] px-2 py-0.5" 
+                  />
                 </div>
+
                 <div className="mt-4">
-                  <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--muted)]">
+                  <div className="flex items-center justify-between text-[9px] font-black uppercase tracking-widest text-slate-400">
                     <span>Survival Timeline</span>
-                    <span className={region.riskLevel === "CRITICAL" ? "text-[var(--critical)]" : "text-[var(--warning)]"}>
-                      {region.estimatedDaysRemaining}/30 Days
+                    <span className={region.riskLevel === 'CRITICAL' ? 'text-[#FF5C61]' : 'text-[#F6A623]'}>
+                      {30 - region.estimatedDaysRemaining}/30 Days
                     </span>
                   </div>
-                  <div className="mt-2 h-1.5 rounded-full bg-[#e8eef6]">
-                    <div
-                      className={`h-1.5 rounded-full ${
-                        region.riskLevel === "CRITICAL"
-                          ? "bg-[var(--critical)]"
-                          : region.riskLevel === "WARNING"
-                            ? "bg-[var(--warning)]"
-                            : "bg-[var(--stable)]"
+                  <div className="mt-1.5 h-1.5 w-full rounded-full bg-slate-100">
+                    <div 
+                      className={`h-full rounded-full transition-all duration-700 ${
+                        region.riskLevel === 'CRITICAL' ? 'bg-[#FF5C61]' : 
+                        region.riskLevel === 'WARNING' ? 'bg-[#F6A623]' : 'bg-[#18B777]'
                       }`}
                       style={{ width: `${progress}%` }}
                     />
                   </div>
-                  <p className="mt-2 text-xs text-[var(--muted)]">
-                    {isSelected ? "Live detail panels are locked to this district." : "Select to inspect full decision flow."}
-                  </p>
                 </div>
               </button>
             );
           })
         )}
-        <button
-          type="button"
-          className="rounded-[0.55rem] bg-[var(--shell)] px-4 py-3 text-sm font-semibold uppercase tracking-[0.08em] text-white shadow-[0_12px_22px_rgba(7,21,35,0.22)] transition hover:bg-[#0d233a]"
-        >
-          Analyze All Districts
-        </button>
       </div>
-    </section>
+    </Card>
   );
 }

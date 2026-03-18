@@ -37,12 +37,12 @@ export function MapFocusPanel({
 
       <div className="mt-6 grid grid-cols-3 gap-3 border-y border-[rgba(119,145,177,0.14)] py-4 text-center">
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--muted)]">Population</p>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--muted)]">Urban Pop</p>
           <p className="mt-2 text-xl font-semibold text-[var(--text)]">{region?.population?.toLocaleString() ?? "--"}</p>
         </div>
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--muted)]">Livestock</p>
-          <p className="mt-2 text-xl font-semibold text-[var(--text)]">{region?.livestock?.toLocaleString() ?? "--"}</p>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--muted)]">Pastoral Pop</p>
+          <p className="mt-2 text-xl font-semibold text-[var(--text)]">{region?.pastoral_population_estimate?.toLocaleString() ?? "--"}</p>
         </div>
         <div>
           <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--muted)]">Rainfall Gap</p>

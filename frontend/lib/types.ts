@@ -9,6 +9,7 @@ export type RegionRecord = {
   id: string;
   name: string;
   district: string;
+  district_type?: "urban" | "town" | "pastoral" | null;
   district_pcode?: string | null;
   region: string;
   region_pcode?: string | null;
@@ -17,10 +18,18 @@ export type RegionRecord = {
   longitude: number;
   area_sqkm?: number | null;
   population?: number | null;
+  pastoral_population_estimate?: number | null;
   livestock?: number | null;
   water_sources: string[];
+  water_infrastructure_level?: "high" | "medium" | "low" | null;
+  baseline_water_security?: "high" | "medium" | "low" | null;
+  drought_prone_region?: boolean | null;
   temperature_c?: number | null;
   days_since_rain: number;
+  satellite_ndvi?: number | null;
+  satellite_rainfall_mm?: number | null;
+  satellite_drought_score?: number | null;
+  satellite_final_priority?: number | null;
 };
 
 export type WaterSourceRecord = {
@@ -70,6 +79,9 @@ export type DroughtAnalysis = {
   actionCode: ActionCode;
   estimatedDaysRemaining: number;
   recommendedAction: string;
+  drivers?: string[];
+  confidence?: number;
+  pastoralVulnerabilityIndex?: number | null;
 };
 
 export type AidPlan = {
@@ -176,4 +188,25 @@ export type DistrictGeoJson = {
   type: "FeatureCollection";
   name?: string;
   features: GeoFeature[];
+};
+
+export type GEEPriorityDistrict = {
+  adm2_name: string;
+  adm2_pcode: string;
+  adm1_name: string;
+  rainfall_mm: number;
+  ndvi: number;
+  drought_score: number;
+  drought_status: string;
+  population: number;
+  water_points: number;
+  water_access: number;
+  final_priority: number;
+  center_lat: number;
+  center_lon: number;
+};
+
+export type PriorityDistrictsResponse = {
+  total: number;
+  districts: GEEPriorityDistrict[];
 };

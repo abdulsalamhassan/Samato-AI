@@ -15,10 +15,10 @@ def build_sms_template(
     analysis: DroughtAnalysis,
 ) -> str:
     urgency_word = "Degdeg" if analysis.risk_level == "CRITICAL" else "Fiiro gaar ah"
+    # User requested to avoid direct travel paths and focus on risk awareness
     return (
-        f"Walaal, {region.name} biyuhu waa yar yihiin. "
-        f"U tag {navigation.water_source_name}, {int(round(navigation.distance_km))}km "
-        f"{navigation.direction}. {urgency_word}!"
+        f"SAMATO_ALERT: Walaal, {region.name} biyuhu way sii dhamaanayaan. "
+        f"Halista abaarta ayaa dhow. Fadlan digtoonaaw. {urgency_word}!"
     )[:160]
 
 
@@ -29,15 +29,15 @@ def generate_sms(
     settings: "Settings",
 ) -> TextGenerationResult:
     fallback_text = build_sms_template(region, navigation, analysis)
+    # Update AI prompt to match the new 'risk-first' strategy instead of 'direct-to-source'
     prompt = (
-        "Write one Somali SMS under 160 characters for a drought alert. "
-        "Be simple, urgent, and direct. "
-        f"Community: {region.name}. "
-        f"Risk level: {analysis.risk_level}. "
-        f"Destination: {navigation.water_source_name}. "
-        f"Distance: {int(round(navigation.distance_km))}km. "
-        f"Direction: {navigation.direction}. "
-        "Do not add explanation or English."
+        "Write one Somali SMS under 160 characters for a drought emergency alert. "
+        "Do NOT tell them where to go. Instead, announce that water is running out "
+        "and there is a high drought risk for nomadic communities. "
+        f"Location: {region.name}. "
+        f"Risk Level: {analysis.risk_level}. "
+        "Keep it simple, urgent, and culturally direct. "
+        "Do not add English or explanation."
     )
     return generate_somali_sms(
         prompt=prompt,

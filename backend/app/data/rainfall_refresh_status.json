@@ -1,0 +1,10 @@
+{
+  "status": "idle",
+  "source": null,
+  "lastAttemptedAt": "2026-03-16T14:10:16.122946Z",
+  "lastSuccessAt": null,
+  "importedCount": 0,
+  "totalObservations": 0,
+  "nextScheduledRefreshAt": null,
+  "message": "No rainfall feed configured."
+}

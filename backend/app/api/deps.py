@@ -18,3 +18,10 @@ def get_water_source_repository() -> WaterSourceRepository:
 @lru_cache
 def get_rainfall_repository() -> RainfallRepository:
     return RainfallRepository()
+
+
+from app.repositories.priority_repo import PriorityRepository
+
+@lru_cache
+def get_priority_repository() -> PriorityRepository:
+    return PriorityRepository()

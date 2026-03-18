@@ -11,6 +11,7 @@ import type {
   RegionDecisionContext,
   RegionRecord,
   SmsPreviewResponse,
+  PriorityDistrictsResponse,
 } from "@/lib/types";
 
 const API_BASE_URL =
@@ -95,4 +96,8 @@ export function fetchRadioScript(regionName: string) {
     method: "POST",
     body: JSON.stringify({ regionName }),
   });
+}
+
+export function fetchPriorityDistricts(limit = 10) {
+  return fetchJson<PriorityDistrictsResponse>(`/priority/districts?limit=${limit}`);
 }
