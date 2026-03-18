@@ -14,6 +14,7 @@ def rank_regions(regions: list[Region], limit: int | None = None) -> list[Ranked
             actionCode=analysis.action_code,
             estimatedDaysRemaining=analysis.estimated_days_remaining,
             recommendedAction=analysis.recommended_action,
+            confidence=analysis.confidence,
         )
         for analysis in (calculate_risk(region) for region in regions)
     ]

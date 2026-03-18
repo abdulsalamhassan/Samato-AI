@@ -7,7 +7,7 @@ from app.core.settings import Settings, get_settings
 from app.models.alert import AlertRequest, AlertResponse, RadioScriptResponse, SmsResponse
 from app.repositories.region_repo import RegionRepository
 from app.repositories.water_repo import WaterSourceRepository
-from app.services.alert_engine import build_alert_report, build_radio_script
+from app.services.ai_text_engine import build_alert_report, build_radio_script
 from app.services.drought_engine import calculate_risk
 from app.services.sms_engine import generate_sms
 from app.services.water_engine import find_nearest_water
@@ -58,13 +58,14 @@ def generate_alert_route(
     _: None = Depends(rate_limit("generate-alert")),
     region_repository: RegionRepository = Depends(get_region_repository),
     water_repository: WaterSourceRepository = Depends(get_water_source_repository),
+    settings: Settings = Depends(get_settings),
 ) -> AlertResponse:
     region, analysis, navigation = _resolve_decision_context(
         payload,
         region_repository,
         water_repository,
     )
-    return AlertResponse(report=build_alert_report(region, analysis, navigation))
+    return AlertResponse(report=build_alert_report(region, analysis, navigation, settings))
 
 
 @router.post("/radio-script", response_model=RadioScriptResponse)
@@ -73,10 +74,11 @@ def generate_radio_script_route(
     _: None = Depends(rate_limit("radio-script")),
     region_repository: RegionRepository = Depends(get_region_repository),
     water_repository: WaterSourceRepository = Depends(get_water_source_repository),
+    settings: Settings = Depends(get_settings),
 ) -> RadioScriptResponse:
     region, analysis, navigation = _resolve_decision_context(
         payload,
         region_repository,
         water_repository,
     )
-    return RadioScriptResponse(script=build_radio_script(region, analysis, navigation))
+    return RadioScriptResponse(script=build_radio_script(region, analysis, navigation, settings))

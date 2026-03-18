@@ -9,8 +9,6 @@ type DecisionSupportPanelProps = {
   region: RegionRecord | null;
   analysis: DroughtAnalysis | null;
   aidPlan: AidPlan | null;
-  alertReport: string;
-  radioScript: string;
   isLoading: boolean;
 };
 
@@ -36,8 +34,6 @@ export function DecisionSupportPanel({
     );
   }
 
-  const gap = Math.round(analysis.stressFactor * 10);
-
   return (
     <div className="flex flex-col gap-6">
       <Card 
@@ -56,24 +52,29 @@ export function DecisionSupportPanel({
       >
         <div className="grid gap-12 md:grid-cols-3 mb-8">
           <div>
-            <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">Rainfall Gap</p>
-            <p className="mt-4 text-3xl font-black text-[#FF5C61]">-{gap}% <span className="text-[10px] font-bold text-slate-400 align-middle ml-1">vs 5yr avg</span></p>
+            <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">Rainfall Deficit</p>
+            <p className="mt-4 text-3xl font-black text-[#FF5C61]">{region.days_since_rain}d <span className="text-[10px] font-bold text-slate-400 align-middle ml-1">without rain</span></p>
             <p className="mt-4 text-[11px] font-medium leading-relaxed text-slate-500">
-              {analysis.recommendedAction.split('.')[0]}. Severe meteorological drought confirmed.
+              {analysis.recommendedAction.split('.')[0]}. Rainfall deficit confirmed by satellite.
             </p>
           </div>
           <div>
-            <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">Pop. Pressure</p>
-            <p className="mt-4 text-3xl font-black text-slate-800">Critical <span className="text-[10px] font-bold text-[#2F7FED] align-middle ml-1">+12% Inflow</span></p>
+            <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">NDVI Vegetation</p>
+            <p className="mt-4 text-3xl font-black text-slate-800">
+              {region.satellite_ndvi != null ? region.satellite_ndvi.toFixed(2) : "N/A"}
+              <span className="text-[10px] font-bold text-[#2F7FED] align-middle ml-1">index</span>
+            </p>
             <p className="mt-4 text-[11px] font-medium leading-relaxed text-slate-500">
-              High IDP movement from surrounding rural areas increasing per-capita demand.
+              {region.satellite_ndvi != null && region.satellite_ndvi < 0.2
+                ? "Severe vegetation degradation detected. Pasture collapse imminent."
+                : "Vegetation stress observed across pastoral zones."}
             </p>
           </div>
           <div>
             <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-slate-400">Infrastructure</p>
-            <p className="mt-4 text-3xl font-black text-[#FF5C61]">Poor <span className="text-[10px] font-bold text-slate-400 align-middle ml-1">1/4 Active</span></p>
+            <p className="mt-4 text-3xl font-black text-[#FF5C61] capitalize">{region.water_infrastructure_level || "Unknown"} <span className="text-[10px] font-bold text-slate-400 align-middle ml-1">capacity</span></p>
             <p className="mt-4 text-[11px] font-medium leading-relaxed text-slate-500">
-              Primary borehole mechanical failure imminent. Backup sources contaminated.
+              {analysis.sourceCount} water source{analysis.sourceCount !== 1 ? "s" : ""} identified. Stress factor {analysis.stressFactor.toFixed(2)}.
             </p>
           </div>
         </div>

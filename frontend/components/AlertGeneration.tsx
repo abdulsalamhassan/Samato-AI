@@ -13,6 +13,8 @@ type AlertGenerationProps = {
   aidPlan: AidPlan | null;
   alertReport: string;
   radioScript: string;
+  aiAnalysis?: string;
+  confidence: number;
 };
 
 export function AlertGeneration({
@@ -21,6 +23,8 @@ export function AlertGeneration({
   aidPlan,
   alertReport,
   radioScript,
+  aiAnalysis,
+  confidence,
 }: AlertGenerationProps) {
   const [activeAction, setActiveAction] = React.useState<string | null>(null);
   const [isProcessing, setIsProcessing] = React.useState<string | null>(null);
@@ -109,6 +113,27 @@ export function AlertGeneration({
                 <div className="h-10 w-1 bg-slate-800 rounded-l" />
                 <div className="h-16 w-1 bg-slate-800 rounded-l" />
              </div>
+          </div>
+
+          {/* AI-Generated Technical Intelligence (Pillar 3) */}
+          <div className="rounded-2xl border border-blue-500/20 bg-blue-500/5 p-5">
+             <div className="flex items-center gap-3 mb-4">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500 text-white shadow-lg">
+                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                   </svg>
+                </div>
+                <div>
+                   <p className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-500">AI Predictive Diagnostic</p>
+                   <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-slate-800">System Confidence:</span>
+                    <span className="text-[10px] font-black text-blue-600">{Math.round(confidence * 100)}%</span>
+                   </div>
+                </div>
+             </div>
+             <p className="text-xs font-medium leading-relaxed text-slate-700 italic border-l-2 border-blue-500/30 pl-3">
+               {aiAnalysis || "Aggregating satellite imagery and ground sensors for predictive modeling..."}
+             </p>
           </div>
 
           {/* Advisory Actions (MOVED FROM ANALYSIS PANEL) */}

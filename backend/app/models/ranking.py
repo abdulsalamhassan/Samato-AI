@@ -11,6 +11,8 @@ class RankedRegion(BaseModel):
     action_code: ActionCode = Field(alias="actionCode")
     estimated_days_remaining: int = Field(alias="estimatedDaysRemaining")
     recommended_action: str = Field(alias="recommendedAction")
+    ai_analysis: str | None = Field(default=None, alias="aiAnalysis")
+    confidence: float = 1.0
 
 
 class RankingsResponse(BaseModel):

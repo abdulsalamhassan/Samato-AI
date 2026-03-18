@@ -49,6 +49,8 @@ export type RankedRegion = {
   actionCode: ActionCode;
   estimatedDaysRemaining: number;
   recommendedAction: string;
+  aiAnalysis?: string;
+  confidence: number;
 };
 
 export type RankingsResponse = {
@@ -159,6 +161,8 @@ export type RegionDecisionContext = {
   sms: SmsPreviewResponse;
   alert: AlertReportResponse;
   radio: RadioScriptResponse;
+  aiAnalysis?: string;
+  confidence: number;
 };
 
 export type AnalysisCenterItem = {

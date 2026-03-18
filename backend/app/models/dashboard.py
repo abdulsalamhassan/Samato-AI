@@ -38,6 +38,8 @@ class RegionDecisionContext(BaseModel):
     sms: SmsResponse
     alert: AlertResponse
     radio: RadioScriptResponse
+    ai_analysis: str | None = Field(default=None, alias="aiAnalysis")
+    confidence: float = 1.0
 
 
 class AnalysisCenterItem(BaseModel):

@@ -226,6 +226,8 @@ export function DashboardClient() {
                   aidPlan={decisionContext?.aidPlan ?? null}
                   alertReport={decisionContext?.alert?.report ?? ""}
                   radioScript={decisionContext?.radio?.script ?? ""}
+                  aiAnalysis={decisionContext?.aiAnalysis}
+                  confidence={decisionContext?.confidence ?? 1.0}
                 />
                </div>
             </div>

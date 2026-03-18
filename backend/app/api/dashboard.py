@@ -21,7 +21,7 @@ from app.repositories.rainfall_repo import RainfallRepository
 from app.repositories.region_repo import RegionRepository
 from app.repositories.water_repo import WaterSourceRepository
 from app.services.aid_planner import build_aid_plan
-from app.services.alert_engine import build_alert_report, build_radio_script
+from app.services.ai_text_engine import build_alert_report, build_radio_script, generate_ai_analysis
 from app.services.drought_engine import calculate_risk
 from app.services.rainfall_refresh_service import load_refresh_status, refresh_rainfall_feed
 from app.services.ranking_engine import rank_regions
@@ -58,8 +58,10 @@ def _build_region_details(
             provider=sms_result.provider,
             usedFallback=sms_result.used_fallback,
         ),
-        alert=AlertResponse(report=build_alert_report(region, analysis, navigation)),
-        radio=RadioScriptResponse(script=build_radio_script(region, analysis, navigation)),
+        alert=AlertResponse(report=build_alert_report(region, analysis, navigation, settings)),
+        radio=RadioScriptResponse(script=build_radio_script(region, analysis, navigation, settings)),
+        aiAnalysis=generate_ai_analysis(region, analysis, settings),
+        confidence=analysis.confidence,
     )
 
 
