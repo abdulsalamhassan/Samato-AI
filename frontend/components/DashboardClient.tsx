@@ -234,6 +234,7 @@ export function DashboardClient() {
             <div ref={alertsRef} className="scroll-mt-8">
               <AlertGeneration
                 isLoading={isLoadingDetails}
+                sms={decisionContext?.sms ?? null}
                 alertReport={decisionContext?.alert?.report ?? ""}
                 radioScript={decisionContext?.radio?.script ?? ""}
                 aiAnalysis={decisionContext?.aiAnalysis}
