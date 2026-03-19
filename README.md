@@ -3,7 +3,7 @@
 SAMATO AI is a drought monitoring and humanitarian decision-support prototype focused on Somalia. The platform combines district-level risk scoring, rainfall context, water-source routing, aid-planning guidance, and community alert generation.
 
 ## Workspace
-
+![alt text](image.png)
 - `frontend/`: Next.js 15 dashboard for the crisis map, rankings, decision support, and alert previews
 - `backend/`: FastAPI service for drought analysis, ranking, water navigation, aid planning, rainfall refresh, and alert generation
 
