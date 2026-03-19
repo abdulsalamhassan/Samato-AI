@@ -45,4 +45,10 @@ pytest -q
 
 - Frontend uses `NEXT_PUBLIC_API_BASE_URL` when provided and otherwise defaults to `http://127.0.0.1:8000`.
 - Backend supports `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `AI_PROVIDER`, and rainfall refresh settings through `.env`.
-- No `.env.example` files are currently checked in, so create local env files manually if needed.
+- Example env files now exist in `frontend/.env.example` and `backend/.env.example`.
+
+## Deployment
+
+- Generic deployment instructions live in `DEPLOYMENT.md`.
+- Dockerfiles are available in `frontend/` and `backend/`.
+- `compose.yaml` is included for two-service validation or container-based deployment.

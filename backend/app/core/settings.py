@@ -1,6 +1,7 @@
+import json
 from functools import lru_cache
 
-from pydantic import Field
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -21,6 +22,19 @@ class Settings(BaseSettings):
     rainfall_feed_path: str | None = None
     rainfall_auto_refresh_enabled: bool = False
     rainfall_refresh_interval_minutes: int = 60
+
+    @field_validator("allowed_origins", mode="before")
+    @classmethod
+    def parse_allowed_origins(cls, value: list[str] | str | None) -> list[str] | None:
+        if value is None or isinstance(value, list):
+            return value
+
+        normalized = value.strip()
+        if not normalized:
+            return []
+        if normalized.startswith("["):
+            return json.loads(normalized)
+        return [origin.strip() for origin in normalized.split(",") if origin.strip()]
 
 
 @lru_cache
